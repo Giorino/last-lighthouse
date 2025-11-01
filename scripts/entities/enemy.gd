@@ -22,6 +22,11 @@ var stun_duration: float = 0.0
 enum State { PATHFINDING, ATTACKING, STUNNED }
 var current_state: State = State.PATHFINDING
 
+## Navigation
+var navigation_agent: NavigationAgent2D = null
+var path_recalculation_cooldown: float = 0.5
+var time_since_last_path: float = 0.0
+
 ## Cached references
 @onready var sprite = $Sprite2D
 
@@ -29,9 +34,29 @@ func _ready() -> void:
 	current_health = max_health
 	add_to_group("enemies")
 	EventBus.enemy_spawned.emit(self)
-
+	
+	# Setup navigation agent
+	setup_navigation_agent()
+	
 	# Find the lighthouse
 	find_lighthouse_target()
+
+func setup_navigation_agent() -> void:
+	"""Create and configure NavigationAgent2D for pathfinding"""
+	navigation_agent = NavigationAgent2D.new()
+	add_child(navigation_agent)
+	
+	# Configure navigation agent
+	navigation_agent.path_desired_distance = 4.0  # How close to get to waypoints
+	navigation_agent.target_desired_distance = attack_range  # How close to get to target
+	navigation_agent.avoidance_enabled = true
+	navigation_agent.radius = 8.0  # Collision radius for avoidance
+	navigation_agent.max_speed = speed
+	
+	# Wait for navigation to be ready
+	await get_tree().physics_frame
+	
+	print("%s navigation agent ready" % enemy_name)
 
 func _physics_process(delta: float) -> void:
 	match current_state:
@@ -52,30 +77,63 @@ func move_toward_target(delta: float) -> void:
 		# Target lost, try to find lighthouse again
 		find_lighthouse_target()
 		return
-
-	# Simple direct pathfinding for Phase 1
-	# In Phase 2, we'll implement proper A* pathfinding around obstacles
-	var direction = (current_target.global_position - global_position).normalized()
+	
+	if not navigation_agent:
+		# Fallback to simple pathfinding if navigation agent not ready
+		simple_pathfinding()
+		return
+	
+	# Update target position periodically
+	time_since_last_path += delta
+	if time_since_last_path >= path_recalculation_cooldown:
+		navigation_agent.target_position = current_target.global_position
+		time_since_last_path = 0.0
+	
+	# Check if navigation agent has reached target
+	if navigation_agent.is_navigation_finished():
+		# We've reached the target
+		var distance_check = global_position.distance_to(current_target.global_position)
+		if distance_check <= attack_range:
+			current_state = State.ATTACKING
+		return
+	
+	# Get next position along the path
+	var next_path_position = navigation_agent.get_next_path_position()
+	var direction = (next_path_position - global_position).normalized()
+	
+	# Move along the path
 	velocity = direction * speed
 	move_and_slide()
-
-	# Flip sprite based on movement direction (using scale for ColorRect)
+	
+	# Flip sprite based on movement direction
 	if sprite and direction.x != 0:
 		sprite.scale.x = -1 if direction.x < 0 else 1
-
-	# Check if in attack range
+	
+	# Check if in attack range of target
 	var distance_to_target = global_position.distance_to(current_target.global_position)
 	if distance_to_target <= attack_range:
 		current_state = State.ATTACKING
-
+	
 	# Check for obstacles - if we hit a structure, attack it instead
 	if get_slide_collision_count() > 0:
 		var collision = get_slide_collision(0)
 		var collider = collision.get_collider()
-
+		
 		if collider and collider.is_in_group("structures"):
-			current_target = collider
-			current_state = State.ATTACKING
+			# Check if this structure is blocking our path
+			var structure_distance = global_position.distance_to(collider.global_position)
+			if structure_distance <= attack_range:
+				current_target = collider
+				current_state = State.ATTACKING
+
+func simple_pathfinding() -> void:
+	"""Fallback simple pathfinding when navigation system not ready"""
+	var direction = (current_target.global_position - global_position).normalized()
+	velocity = direction * speed
+	move_and_slide()
+	
+	if sprite and direction.x != 0:
+		sprite.scale.x = -1 if direction.x < 0 else 1
 
 func perform_attack(delta: float) -> void:
 	attack_timer += delta

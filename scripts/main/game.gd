@@ -10,6 +10,8 @@ const CRAWLER_SCENE = preload("res://scenes/enemies/crawler.tscn")
 @onready var hud = $HUD
 @onready var lighthouse = $Lighthouse
 @onready var keeper = $Keeper
+@onready var navigation_region: NavigationRegion2D = $NavigationRegion2D
+@onready var navigation_manager = $NavigationManager
 
 func _ready() -> void:
 	# Connect to game events
@@ -18,13 +20,17 @@ func _ready() -> void:
 	EventBus.game_over.connect(_on_game_over)
 	EventBus.all_waves_completed.connect(_on_all_waves_completed)
 
+	# Initialize navigation system
+	if navigation_manager and navigation_region:
+		navigation_manager.initialize(navigation_region)
+
 	# Start the game
 	GameManager.start_new_game()
 
 	# Spawn initial resource nodes
 	spawn_initial_resources()
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	# Update HUD with current time and phase
 	if day_night_cycle and hud:
 		hud.update_time_display(
