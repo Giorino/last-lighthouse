@@ -4,6 +4,19 @@ extends Node2D
 
 ## Available structures
 const WALL_SCENE = preload("res://scenes/structures/wall.tscn")
+const BARRICADE_SCENE = preload("res://scenes/structures/barricade.tscn")
+const TURRET_SCENE = preload("res://scenes/structures/turret.tscn")
+const TRAP_SCENE = preload("res://scenes/structures/trap.tscn")
+const GENERATOR_SCENE = preload("res://scenes/structures/generator.tscn")
+
+## Structure catalog for easy access
+var structure_catalog: Dictionary = {
+	1: {"name": "Wall", "scene": WALL_SCENE, "description": "Solid defensive wall"},
+	2: {"name": "Barricade", "scene": BARRICADE_SCENE, "description": "Cheap, weak barrier"},
+	3: {"name": "Turret", "scene": TURRET_SCENE, "description": "Auto-targeting defense"},
+	4: {"name": "Trap", "scene": TRAP_SCENE, "description": "Spike trap"},
+	5: {"name": "Generator", "scene": GENERATOR_SCENE, "description": "Powers nearby turrets"}
+}
 
 ## Build mode state
 var build_mode: bool = false
@@ -31,7 +44,23 @@ func _process(_delta: float) -> void:
 			sprite.modulate = Color.GREEN if is_valid else Color.RED
 
 func _input(event: InputEvent) -> void:
-	# Toggle build mode with B key
+	# Number keys to select structure (1-5)
+	if event is InputEventKey and event.pressed and not event.echo:
+		for key in structure_catalog.keys():
+			if event.keycode == KEY_0 + key:  # KEY_1, KEY_2, etc.
+				var structure_data = structure_catalog[key]
+				print("Selected: %s" % structure_data.name)
+
+				if build_mode:
+					# Switch structure in build mode
+					exit_build_mode()
+					enter_build_mode(structure_data.scene)
+				else:
+					# Enter build mode with selected structure
+					enter_build_mode(structure_data.scene)
+				return
+
+	# Toggle build mode with B key (default to wall)
 	if event.is_action_pressed("build_mode"):
 		if not build_mode:
 			enter_build_mode(WALL_SCENE)
@@ -43,10 +72,13 @@ func _input(event: InputEvent) -> void:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed and build_mode:
 			place_structure()
 
-	# Cancel with right click
+	# Cancel with right click or ESC
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed and build_mode:
 			exit_build_mode()
+
+	if event.is_action_pressed("ui_cancel") and build_mode:
+		exit_build_mode()
 
 func enter_build_mode(structure: PackedScene) -> void:
 	if not GameManager.enable_building:
@@ -70,6 +102,10 @@ func enter_build_mode(structure: PackedScene) -> void:
 		collision.disabled = true
 
 	add_child(ghost_instance)
+
+	# Show build menu
+	show_build_menu()
+
 	print("Entered build mode")
 
 func exit_build_mode() -> void:
@@ -80,7 +116,22 @@ func exit_build_mode() -> void:
 		ghost_instance.queue_free()
 		ghost_instance = null
 
+	# Hide build menu
+	hide_build_menu()
+
 	print("Exited build mode")
+
+func show_build_menu() -> void:
+	"""Show the build menu UI"""
+	var hud = get_tree().get_first_node_in_group("hud")
+	if hud and hud.has_node("BuildMenu"):
+		hud.get_node("BuildMenu").visible = true
+
+func hide_build_menu() -> void:
+	"""Hide the build menu UI"""
+	var hud = get_tree().get_first_node_in_group("hud")
+	if hud and hud.has_node("BuildMenu"):
+		hud.get_node("BuildMenu").visible = false
 
 func snap_to_grid(pos: Vector2) -> Vector2:
 	return Vector2(

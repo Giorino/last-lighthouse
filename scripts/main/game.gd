@@ -12,6 +12,7 @@ const CRAWLER_SCENE = preload("res://scenes/enemies/crawler.tscn")
 @onready var keeper = $Keeper
 @onready var navigation_region: NavigationRegion2D = $NavigationRegion2D
 @onready var navigation_manager = $NavigationManager
+@onready var wave_spawner = $WaveSpawner
 
 func _ready() -> void:
 	# Connect to game events
@@ -58,41 +59,15 @@ func spawn_initial_resources() -> void:
 	add_child(metal_node)
 
 func _on_night_started() -> void:
-	print("=== SPAWNING ENEMIES ===")
-	# Simple enemy spawning for Phase 1
-	# Spawn 5 crawlers for the first night
-	var num_enemies = 5 + (GameManager.current_night * 2)
-
-	for i in range(num_enemies):
-		# Spawn at edges
-		var spawn_pos = Vector2.ZERO
-		var edge = randi() % 4
-
-		match edge:
-			0:  # Top
-				spawn_pos = Vector2(randf_range(0, 320), 0)
-			1:  # Right
-				spawn_pos = Vector2(320, randf_range(0, 180))
-			2:  # Bottom
-				spawn_pos = Vector2(randf_range(0, 320), 180)
-			3:  # Left
-				spawn_pos = Vector2(0, randf_range(0, 180))
-
-		# Stagger spawns
-		await get_tree().create_timer(0.5).timeout
-
-		var crawler = CRAWLER_SCENE.instantiate()
-		crawler.global_position = spawn_pos
-		add_child(crawler)
+	print("=== NIGHT STARTED ===")
+	# Use WaveSpawner to spawn enemies with proper composition
+	if wave_spawner:
+		wave_spawner.start_night(GameManager.current_night)
 
 func _on_night_ended() -> void:
-	# Check if all enemies are dead
-	await get_tree().create_timer(1.0).timeout
-
-	var remaining_enemies = get_tree().get_nodes_in_group("enemies")
-	if remaining_enemies.size() == 0:
-		print("All enemies defeated!")
-		EventBus.all_waves_completed.emit()
+	# WaveSpawner now handles wave completion
+	# This is called when night phase timer ends, but waves may still be active
+	print("Night phase ended (timer), waiting for waves to complete...")
 
 func _on_all_waves_completed() -> void:
 	# Transition to next day

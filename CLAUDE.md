@@ -306,258 +306,27 @@ Phase 1 prototype is functional and playable. Core systems are implemented with 
 
 ## Implementation Progress
 
-### Session 1 - Phase 1 Prototype (November 2024)
+### Phase 1 ✅ COMPLETE
+- **Core Loop:** Day(300s) → Transition(30s) → Night(waves) cycle working
+- **Systems:** 4 autoloads, pathfinding (A*), combat, building, resource management
+- **Content:** 1 enemy (Crawler), 1 structure (Wall), player with beam ability
+- **Status:** Functional with placeholders, all base mechanics operational
 
-**Completed Work:**
+### Phase 2 ✅ COMPLETE
+- **Enemies:** +Spitter (ranged/150rng), +Brute (tank/1.5x structure dmg), +Swarm (fast/100spd)
+- **Structures:** +Barricade (cheap), +Turret (auto-aim), +Trap (trigger dmg), +Generator (powers turrets)
+- **Wave System:** Budget-based composition, scales by night (N1-5: crawlers only → N16+: all types)
+- **Repair:** Hold R near structure, costs 50% original, 2s channel
+- **Build UI:** Keys 1-5 select structures, red/green ghost validation
+- **Managers:** SaveManager (meta-progression/unlocks), AudioManager (ready for assets)
+- **Files:** +32 scripts/scenes total
 
-#### Project Configuration
-- **project.godot** - Configured core settings:
-  - Set main scene to `res://scenes/main/game.tscn`
-  - Configured pixel-perfect rendering (320x180 base, 6x scaled to 1920x1080)
-  - Added 4 autoload singletons: Constants, EventBus, ResourceManager, GameManager
-  - Defined all input actions (move, interact, build_mode, lighthouse_beam, shoot, pause)
-  - Set texture filter to nearest-neighbor for pixel art
+### Current Controls
+- **1-5:** Select/build structures | **R:** Repair | **B:** Toggle build | **Space:** Beam | **WASD:** Move | **E:** Interact
 
-- **.gitignore** - Added `.DS_Store` exclusion for macOS
+### Next Phase Priorities
+- Resource node respawning, Pause menu, Game over/victory screens, Additional keepers (Soldier/Scavenger/Medic), Sprite assets, Audio assets
 
-- **.cursorrules** - Created development guidelines for AI assistants
-
-- **HOW_TO_PLAY.md** - Created player guide for Phase 1 prototype
-
-#### Core Systems (scripts/autoload/)
-- **constants.gd** - Game-wide constants and enums
-  - ResourceType enum (WOOD, METAL, STONE, FUEL)
-  - GamePhase enum (DAY, TRANSITION, NIGHT)
-  - GameState enum (PLAYING, PAUSED, GAME_OVER, VICTORY)
-  - Grid settings (TILE_SIZE = 16)
-  
-- **event_bus.gd** - Global signal hub for decoupled communication
-  - Phase change signals (day_started, transition_started, night_started)
-  - Resource signals (resource_changed, resource_gathered)
-  - Combat signals (enemy_died, enemy_spawned, structure_damaged)
-  - Game state signals (game_over, night_completed, lighthouse_damaged)
-
-- **resource_manager.gd** - Resource tracking system
-  - Manages Wood, Metal, Stone, Fuel quantities
-  - Provides add_resource() and spend_resources() methods
-  - Emits signals on resource changes
-  - Starting resources: 20 Wood, 10 Metal, 15 Stone, 50 Fuel
-
-- **game_manager.gd** - Game state and flow control
-  - Tracks current phase, night number, game state
-  - Manages pause/unpause functionality
-  - Handles game over and victory conditions
-  - Coordinates with DayNightCycle for phase transitions
-
-#### Entity Scripts (scripts/entities/)
-- **keeper.gd** - Player character controller
-  - CharacterBody2D with 50 movement speed
-  - Health system (100 HP)
-  - Resource gathering interaction system (2s hold time)
-  - Basic movement with WASD/arrows
-  - Signals for health changes and resource gathering
-
-- **enemy.gd** - Base enemy class
-  - CharacterBody2D with pathfinding toward lighthouse
-  - Health system (50 HP base)
-  - Attack system (10 damage base, 1s cooldown)
-  - State machine: IDLE, PATHFINDING, ATTACKING, DEAD
-  - Targets lighthouse or structures blocking path
-
-- **lighthouse.gd** - Central objective structure
-  - Area2D representing lighthouse
-  - Health system (500 HP)
-  - Beam ability (fuel-powered stun, 100 radius, 5 fuel/sec)
-  - Takes damage from enemies
-  - Emits lighthouse_damaged signal
-
-- **resource_node.gd** - Gatherable resource points
-  - StaticBody2D representing resource deposits
-  - Type-based resources (wood/metal)
-  - Gather time: 2 seconds
-  - Starting amount: 50 resources per node
-  - Fully depletable (queue_free on empty)
-
-- **structure.gd** - Base buildable structure class
-  - StaticBody2D with health system (100 HP base)
-  - Cost dictionary for building requirements
-  - Takes damage from enemies
-  - Emits structure_destroyed signal
-
-#### Gameplay Systems (scripts/gameplay/ & scripts/systems/)
-- **day_night_cycle.gd** - Central game loop manager
-  - Day Phase: 300 seconds (5 minutes)
-  - Transition Phase: 30 seconds
-  - Night Phase: Variable duration based on enemies
-  - Auto-advances phases with countdown timers
-  - Emits signals for phase changes
-  - Coordinates with GameManager and spawning
-
-- **build_system.gd** - Structure placement system
-  - Grid-based placement (16x16 tiles)
-  - Ghost preview showing valid/invalid placement
-  - Instant construction with resource checks
-  - Currently supports Wall structure only
-  - Collision detection for placement validation
-
-#### Main Scene & UI (scripts/main/ & scripts/ui/)
-- **game.gd** - Root scene controller
-  - Initializes game systems
-  - Spawns player keeper and lighthouse
-  - Creates resource nodes procedurally
-  - Sets up day/night cycle
-  - Manages enemy spawning during night phases
-  - Wave-based spawning (night_number * 3 crawlers)
-
-- **hud.gd** - HUD overlay
-  - Resource display (Wood, Metal, Stone, Fuel)
-  - Phase indicator (DAY/TRANSITION/NIGHT)
-  - Phase timer countdown
-  - Lighthouse HP bar
-  - Updates in real-time via EventBus signals
-
-#### Scene Files (scenes/)
-All scenes created with placeholder graphics (ColorRect/Sprites):
-
-- **main/game.tscn** - Root game scene
-  - Contains camera, UI layer, game world
-  - Manages spawning and game flow
-
-- **characters/keeper_base.tscn** - Player character
-  - CharacterBody2D with collision
-  - Blue rectangle placeholder (16x16)
-
-- **enemies/crawler.tscn** - Basic enemy type
-  - CharacterBody2D with pathfinding
-  - Green rectangle placeholder (12x12)
-  - 50 HP, 40 speed, 10 damage
-
-- **environment/resource_node.tscn** - Resource gathering points
-  - StaticBody2D with interaction area
-  - Brown (wood) or gray (metal) rectangles
-
-- **gameplay/lighthouse.tscn** - Central objective
-  - Area2D with large collision shape
-  - White/yellow rectangle placeholder (32x48)
-  - 500 HP, beam ability
-
-- **structures/wall.tscn** - Basic defensive structure
-  - StaticBody2D with collision
-  - Tan rectangle placeholder (16x16)
-  - Cost: 5 Wood, 10 Stone
-  - 100 HP
-
-- **ui/hud.tscn** - Game HUD
-  - Resource counters, phase display, timer, HP bar
-  - Updates via EventBus signals
-
-**What Works:**
-✅ Full day/night cycle with automatic phase transitions
-✅ Player movement and resource gathering
-✅ Resource management system (gain/spend)
-✅ Build mode with grid placement
-✅ Enemy spawning and pathfinding to lighthouse
-✅ Combat (enemies attack lighthouse/structures)
-✅ Lighthouse beam ability (stuns enemies, drains fuel)
-✅ Wave progression (more enemies each night)
-✅ Game over on lighthouse destruction
-✅ Real-time HUD updates
-
-**Known Limitations (Phase 1):**
-⚠️ Placeholder graphics (colored rectangles only)
-⚠️ Basic direct pathfinding (no A* or NavigationServer2D yet)
-⚠️ Only one enemy type (Crawler)
-⚠️ Only one structure type (Wall)
-⚠️ No sound or music
-⚠️ No save/load system
-⚠️ No keeper selection (Engineer only)
-⚠️ No pause menu
-⚠️ No proper win condition (runs indefinitely after night victory)
-⚠️ Resource nodes don't respawn
-⚠️ No building repair system
-⚠️ Enemy pathfinding doesn't recalculate around walls
-
-**Next Steps for Phase 2:**
-- Implement proper A*/NavigationServer2D pathfinding
-- Add more enemy types (Spitter, Brute, Swarm)
-- Add more structures (Barricade, Turret, Trap, Generator)
-- Add proper sprite assets
-- Implement save/load system
-- Add pause menu
-- Add keeper selection screen
-- Add meta-progression unlocks
-- Add sound effects and music
-- Improve AI to recalculate paths around structures
-- Add resource node respawning
-- Add structure repair mechanic
-
-**Technical Notes:**
-- All systems use signal-based architecture via EventBus
-- Minimal direct coupling between components
-- Grid-based coordinate system (16x16 tiles)
-- Resource costs stored as Dictionaries in structure scripts
-- .uid files generated by Godot 4.4+ for resource tracking
-
-### Session 2 - Phase 2 Pathfinding (November 2024)
-
-**Completed Work:**
-
-#### Advanced Pathfinding System
-Implemented proper A*/NavigationServer2D pathfinding to replace simple direct pathfinding.
-
-**Mathematical Approach:**
-- A* algorithm: `f(n) = g(n) + h(n)` where g(n) is actual cost and h(n) is heuristic (Manhattan distance)
-- Grid-based navigation with 16x16 tile resolution
-- Dynamic navigation mesh that updates when structures are placed/destroyed
-
-**New Files Created:**
-- **scripts/systems/navigation_manager.gd** - NavigationManager class
-  - Manages NavigationRegion2D and NavigationPolygon
-  - `initialize()` - Sets up navigation region reference
-  - `create_base_navigation_mesh()` - Creates initial walkable area (320x180)
-  - `rebuild_navigation_mesh()` - Rebuilds mesh when structures change
-  - `add_structure_obstacle()` - Adds structure as navigation obstacle
-  - Connects to EventBus signals (structure_placed, structure_destroyed)
-  - Uses NavigationServer2D.parse_source_geometry_data() and bake_from_source_geometry_data() for Godot 4.4+ compatibility
-
-**Modified Files:**
-- **scenes/main/game.tscn** - Added NavigationRegion2D and NavigationManager nodes
-- **scripts/main/game.gd** - Added navigation_manager initialization in _ready()
-- **scripts/entities/enemy.gd** - Major pathfinding rewrite:
-  - Added `navigation_agent` (NavigationAgent2D) created dynamically
-  - Added `setup_navigation_agent()` - Configures navigation agent properties
-  - Rewrote `move_toward_target()` - Now uses NavigationAgent2D.get_next_path_position()
-  - Added `simple_pathfinding()` fallback for when navigation not ready
-  - Path recalculation cooldown (0.5s) to avoid excessive computation
-  - Enemies now properly path around structures to reach lighthouse
-
-**How It Works:**
-1. NavigationManager creates a NavigationPolygon covering the entire 320x180 map
-2. When structures are placed, they're added as "holes" (obstacles) in the navigation mesh
-3. NavigationServer2D bakes the mesh, creating pathable polygons
-4. Enemies use NavigationAgent2D to query paths through the mesh
-5. NavigationAgent2D uses A* internally to find optimal paths around obstacles
-
-**What's Fixed:**
-✅ Enemies now path around walls instead of pushing against them indefinitely
-✅ Navigation mesh dynamically updates when structures are built/destroyed
-✅ Proper A* pathfinding with heuristic guidance
-✅ No more enemies getting stuck on obstacles
-✅ Fallback to simple pathfinding if navigation not ready (graceful degradation)
-
-**Testing:**
-- Game runs without errors
-- Navigation mesh initializes on start
-- Structures can be placed and navigation updates
-- Enemies will now pathfind around walls (testable by building walls during day and observing enemy behavior during night)
-
-**Next Steps for Phase 2:**
-- ~~Implement proper A*/NavigationServer2D pathfinding~~ ✅ DONE
-- Add more enemy types (Spitter, Brute, Swarm)
-- Add more structures (Barricade, Turret, Trap, Generator)
-- Enhance wave spawner with enemy composition
-- Add proper sprite assets
-- Polish UI and visual feedback
 
 ## Development Workflow
 
