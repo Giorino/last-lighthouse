@@ -29,6 +29,22 @@
 - Use `python3` (not `python`) when running Python commands.
 - Treat `README.md` as the primary source of truth for gameplay/architecture; prefer `docs/*` for deeper details when present.
 
+#### Available MCP Tools
+You have access to specialized MCP (Model Context Protocol) servers:
+
+**Godot MCP** - Direct Godot Engine integration:
+- Use `mcp_godot_get_project_info` to query project structure
+- Use `mcp_godot_run_project` to run and test the game
+- Use `mcp_godot_create_scene` / `mcp_godot_add_node` for programmatic scene creation
+- Use `mcp_godot_get_debug_output` when debugging runtime issues
+- See `CLAUDE.md` for full tool list and examples
+
+**Context7 MCP** - Up-to-date library documentation:
+- Use `mcp_context7_resolve-library-id` first to find library ID (e.g., "godot" → "/godotengine/godot/4_5_stable")
+- Use `mcp_context7_get-library-docs` to fetch current Godot API docs for specific topics
+- Always specify version to match project (prefer `/godotengine/godot/4_5_stable`)
+- See `CLAUDE.md` for workflow examples
+
 #### Message Structure (for clarity)
 - Progress Update → Answer/Edits → Short summary of impact.
 - Be concise by default; expand details only when necessary (or when asked).
