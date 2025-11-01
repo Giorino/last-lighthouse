@@ -1,0 +1,36 @@
+### Cursor Rules — Last Lighthouse
+
+#### Progress Tracking (every message)
+- Always start with a brief Progress Update (1–3 sentences): what just happened, what’s next, and any blockers/risks.
+- When a multi-step change is underway, maintain a lightweight TODO list and check items off immediately upon completion.
+- Keep updates concise and action-focused.
+
+#### Resolve Vagueness by Checking Required Documents First
+- Before asking the user for clarification, consult project documents in this order:
+  1. `README.md`
+  2. `docs/GAME_DESIGN.md`
+  3. `docs/TECHNICAL_SPEC.md`
+  4. `docs/ART_GUIDE.md`
+  5. `docs/BALANCING_NOTES.md`
+  6. `project.godot` and the `scenes/` and `scripts/` directories for canonical references
+- If still unclear, ask 1–2 targeted questions and propose a safe, clearly stated assumption to keep momentum.
+
+#### Project Conventions
+- Engine: Godot 4.x. Prefer GDScript unless a strong reason exists otherwise.
+- Follow README architecture principles: heavy use of Signals, composition over inheritance, modular systems, minimal Autoloads.
+- Adhere to naming and clarity guidelines shown in `README.md` (e.g., descriptive identifiers, enums for states).
+
+#### Code & Edit Hygiene
+- Match existing formatting and preserve indentation style; do not reformat unrelated code.
+- Only add comments for non-obvious rationale, invariants, or edge cases.
+- Keep changes scoped; avoid broad refactors unless requested.
+
+#### Commands & Environment
+- Use `python3` (not `python`) when running Python commands.
+- Treat `README.md` as the primary source of truth for gameplay/architecture; prefer `docs/*` for deeper details when present.
+
+#### Message Structure (for clarity)
+- Progress Update → Answer/Edits → Short summary of impact.
+- Be concise by default; expand details only when necessary (or when asked).
+
+
