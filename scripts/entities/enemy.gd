@@ -114,15 +114,15 @@ func move_toward_target(delta: float) -> void:
 	if distance_to_target <= attack_range:
 		current_state = State.ATTACKING
 	
-	# Check for obstacles - if we hit a structure, attack it instead
+	# Check for obstacles - if we hit a structure or lighthouse, attack it
 	if get_slide_collision_count() > 0:
 		var collision = get_slide_collision(0)
 		var collider = collision.get_collider()
-		
-		if collider and collider.is_in_group("structures"):
-			# Check if this structure is blocking our path
-			var structure_distance = global_position.distance_to(collider.global_position)
-			if structure_distance <= attack_range:
+
+		if collider and (collider.is_in_group("structures") or collider.is_in_group("lighthouse")):
+			# Check if this target is within attack range
+			var target_distance = global_position.distance_to(collider.global_position)
+			if target_distance <= attack_range * 2.0:  # Use 2x range for collision detection
 				current_target = collider
 				current_state = State.ATTACKING
 
@@ -185,6 +185,14 @@ func apply_stun(duration: float) -> void:
 func take_damage(amount: int) -> void:
 	current_health -= amount
 
+	# Juice: Hit particles and light shake
+	if VisualEffectsManager:
+		VisualEffectsManager.spawn_hit_effect(global_position)
+	if EventBus:
+		EventBus.camera_shake.emit(0.1)  # Light shake
+	if TimeScaleManager:
+		TimeScaleManager.hit_pause_light()
+
 	# Visual feedback - flash red
 	if sprite:
 		var tween = create_tween()
@@ -197,6 +205,14 @@ func take_damage(amount: int) -> void:
 func die() -> void:
 	EventBus.enemy_died.emit(self)
 	print("%s died!" % enemy_name)
+
+	# Juice: Death explosion particles, camera shake, hit pause
+	if VisualEffectsManager:
+		VisualEffectsManager.spawn_death_explosion(global_position)
+	if EventBus:
+		EventBus.camera_shake.emit(0.3)  # Medium shake
+	if TimeScaleManager:
+		TimeScaleManager.hit_pause_medium()
 
 	# Death effect
 	if sprite:

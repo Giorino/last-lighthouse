@@ -106,6 +106,10 @@ func complete_harvest() -> void:
 	if progress_bar:
 		progress_bar.visible = false
 
+	# Disable collision so bullets/entities can pass through
+	collision_layer = 0
+	collision_mask = 0
+
 	# Visual feedback - fade out
 	if sprite:
 		var tween = create_tween()

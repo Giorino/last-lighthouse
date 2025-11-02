@@ -321,7 +321,7 @@ Phase 1 prototype is functional and playable. Core systems are implemented with 
 - **Managers:** SaveManager (meta-progression/unlocks), AudioManager (ready for assets)
 - **Files:** +32 scripts/scenes total
 
-### Phase 3 ✅ IN PROGRESS
+### Phase 3 ✅ COMPLETE
 - **Keepers:** +Soldier (120HP/combat), +Scavenger (130spd/gathering), +Medic (heal lighthouse)
 - **Abilities:** F key activates unique keeper abilities (30s cooldown)
   - Soldier: Rally (boost turret attack speed 2x/10s)
@@ -331,11 +331,32 @@ Phase 1 prototype is functional and playable. Core systems are implemented with 
 - **Game Over Screen:** Shows night reached, enemies killed, resources, tokens earned
 - **Files:** +3 keeper scripts/scenes, pause menu, game over screen
 
+### Phase 4 🎨 IN PROGRESS (Polish & Juice)
+- **Particle Systems:** ✅ Hit effects, death explosions, muzzle flash, build particles
+- **Camera Juice:** ✅ Trauma-based screen shake, smooth follow, zoom support
+- **Hit Pause:** ✅ Freeze frames on impacts (light/medium/heavy)
+- **Visual Effects Manager:** ✅ Centralized particle spawning system
+- **Time Scale Manager:** ✅ Hit pause and slow-motion support
+- **Integration:** ✅ Particles + shake on all combat events, building, destruction
+- **Art Pipeline:** ✅ Asset structure documented in `docs/ART_ASSET_GUIDE.md`
+- **Status:** Technical juice systems complete, ready for art/audio assets
+- **Files:** +4 particle scenes, CameraController, VisualEffectsManager, TimeScaleManager
+
 ### Current Controls
 - **1-5:** Select/build structures | **R:** Repair | **B:** Toggle build | **Space:** Beam | **F:** Keeper ability | **ESC:** Pause | **WASD:** Move | **E:** Interact
 
-### Next Priorities
-- Keeper selection screen, Main menu, Stat tracking integration, Resource respawning, Victory screen
+### Next Priorities (Phase 4 Completion)
+- Add sound effects (combat, building, UI, ambient)
+- Add music tracks (day/night themes)
+- Polish camera bounds and follow behavior
+- Add more particle variety (blood, sparks, smoke)
+
+### Next Priorities (Phase 5+)
+- Keeper selection screen
+- Main menu with title artwork
+- Victory/progression screen
+- Replace placeholder sprites with pixel art
+- Boss enemies and advanced content
 
 
 ## Development Workflow

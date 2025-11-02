@@ -19,11 +19,21 @@ var current_health: int = max_health
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 
 func _ready() -> void:
+	# Apply upgrade bonuses for wall-type structures
+	if structure_name == "Wall" or structure_name == "Barricade":
+		max_health += GameManager.get_wall_health_bonus()
+
 	current_health = max_health
 	add_to_group("structures")
 
 func take_damage(amount: int) -> void:
 	current_health -= amount
+
+	# Juice: Hit particles and light shake
+	if VisualEffectsManager:
+		VisualEffectsManager.spawn_hit_effect(global_position)
+	if EventBus:
+		EventBus.camera_shake.emit(0.1)  # Light shake
 
 	# Visual damage feedback
 	if sprite:
@@ -51,6 +61,14 @@ func repair(amount: int) -> void:
 func destroy() -> void:
 	print("%s destroyed!" % structure_name)
 	EventBus.structure_destroyed.emit(self)
+
+	# Juice: Explosion particles, heavy shake, and hit pause
+	if VisualEffectsManager:
+		VisualEffectsManager.spawn_death_explosion(global_position)
+	if EventBus:
+		EventBus.camera_shake.emit(0.5)  # Heavy shake for structure destruction
+	if TimeScaleManager:
+		TimeScaleManager.hit_pause_heavy()
 
 	# Destruction effect
 	if sprite:

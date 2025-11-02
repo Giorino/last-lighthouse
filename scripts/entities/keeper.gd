@@ -27,6 +27,10 @@ func _ready() -> void:
 	current_health = max_health
 	add_to_group("keeper")
 
+	# Apply upgrade bonuses
+	speed *= GameManager.get_movement_speed_multiplier()
+	ability_cooldown *= GameManager.get_ability_cooldown_multiplier()
+
 	# Register with GameManager
 	GameManager.keeper = self
 

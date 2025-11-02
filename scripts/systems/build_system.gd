@@ -170,7 +170,13 @@ func place_structure() -> void:
 
 	# Get costs from ghost_instance (already initialized via _ready())
 	# The ghost_instance is already in the scene tree, so its _ready() has been called
-	var costs = ghost_instance.costs
+	var base_costs = ghost_instance.costs
+
+	# Apply cost reduction upgrade
+	var cost_multiplier = GameManager.get_build_cost_multiplier()
+	var costs = {}
+	for resource_type in base_costs:
+		costs[resource_type] = ceili(base_costs[resource_type] * cost_multiplier)
 
 	# Check if can afford
 	if not ResourceManager.can_afford(costs):
@@ -184,6 +190,10 @@ func place_structure() -> void:
 	var structure = selected_structure.instantiate()
 	structure.global_position = grid_pos
 	get_parent().add_child(structure)
+
+	# Juice: Build particles effect
+	if VisualEffectsManager:
+		VisualEffectsManager.spawn_build_particles(grid_pos)
 
 	EventBus.structure_placed.emit(structure)
 	print("Structure placed!")

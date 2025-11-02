@@ -4,6 +4,9 @@ extends Node
 ## Current resource amounts
 var resources: Dictionary = {}
 
+## Total resources gathered during this run (for statistics)
+var total_resources_gathered: int = 0
+
 func _ready() -> void:
 	# Initialize with starting resources
 	reset_resources()
@@ -11,6 +14,7 @@ func _ready() -> void:
 ## Reset resources to starting amounts
 func reset_resources() -> void:
 	resources = Constants.STARTING_RESOURCES.duplicate()
+	total_resources_gathered = 0
 	for type in resources:
 		EventBus.resource_changed.emit(type, resources[type])
 
@@ -20,6 +24,7 @@ func add_resource(type: Constants.ResourceType, amount: int) -> void:
 		return
 
 	resources[type] += amount
+	total_resources_gathered += amount
 	EventBus.resource_changed.emit(type, resources[type])
 
 ## Attempt to spend resources of a given type
@@ -56,3 +61,7 @@ func spend_resources(costs: Dictionary) -> bool:
 ## Get current amount of a resource type
 func get_resource(type: Constants.ResourceType) -> int:
 	return resources.get(type, 0)
+
+## Get total resources gathered during this run
+func get_total_resources_gathered() -> int:
+	return total_resources_gathered

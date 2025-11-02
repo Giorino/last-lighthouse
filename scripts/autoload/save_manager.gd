@@ -14,6 +14,22 @@ var save_data = {
 	"total_resources_gathered": 0,
 	"unlocks": [],
 	"achievements": [],
+	"upgrades": {
+		# Lighthouse upgrades
+		"lighthouse_max_hp": 0,  # +50 HP per level (max 5)
+		"lighthouse_beam_damage": 0,  # +5 damage per level (max 5)
+		"lighthouse_beam_duration": 0,  # +0.5s stun per level (max 3)
+		# Structure upgrades
+		"turret_damage": 0,  # +2 damage per level (max 5)
+		"turret_fire_rate": 0,  # -10% cooldown per level (max 5)
+		"wall_health": 0,  # +20 HP per level (max 5)
+		"build_cost_reduction": 0,  # -5% cost per level (max 5)
+		# Keeper upgrades
+		"starting_wood": 0,  # +10 wood per level (max 5)
+		"starting_metal": 0,  # +10 metal per level (max 5)
+		"movement_speed": 0,  # +5% speed per level (max 5)
+		"ability_cooldown": 0,  # -10% cooldown per level (max 3)
+	},
 	"settings": {
 		"music_volume": 1.0,
 		"sfx_volume": 1.0,
@@ -42,11 +58,28 @@ func load_game() -> void:
 
 	var file = FileAccess.open(SAVE_PATH, FileAccess.READ)
 	if file:
-		save_data = file.get_var()
+		var loaded_data = file.get_var()
 		file.close()
+
+		# Merge loaded data with default save_data to ensure all keys exist
+		# This handles old save files that don't have new features like upgrades
+		_merge_save_data(loaded_data)
+
 		print("Game loaded successfully!")
 	else:
 		print("ERROR: Failed to load game!")
+
+func _merge_save_data(loaded_data: Dictionary) -> void:
+	"""Merge loaded data with default save_data structure"""
+	for key in loaded_data:
+		if key in save_data:
+			# If both are dictionaries, merge them recursively
+			if typeof(save_data[key]) == TYPE_DICTIONARY and typeof(loaded_data[key]) == TYPE_DICTIONARY:
+				for sub_key in loaded_data[key]:
+					save_data[key][sub_key] = loaded_data[key][sub_key]
+			else:
+				# Otherwise just overwrite
+				save_data[key] = loaded_data[key]
 
 func update_run_stats(night_reached: int, enemies_killed: int, resources_gathered: int) -> void:
 	"""Update stats after a run ends"""
@@ -112,3 +145,38 @@ func set_setting(key: String, value) -> void:
 	"""Set a setting value"""
 	save_data.settings[key] = value
 	save_game()
+
+## Upgrade System
+func get_upgrade_level(upgrade_id: String) -> int:
+	"""Get the current level of an upgrade"""
+	if not save_data.has("upgrades"):
+		return 0
+	if save_data.upgrades.has(upgrade_id):
+		return save_data.upgrades[upgrade_id]
+	return 0
+
+func purchase_upgrade(upgrade_id: String, cost: int, max_level: int) -> bool:
+	"""Purchase an upgrade if player can afford it and hasn't maxed it"""
+	# Ensure upgrades dictionary exists
+	if not save_data.has("upgrades"):
+		save_data.upgrades = {}
+
+	var current_level = get_upgrade_level(upgrade_id)
+
+	if current_level >= max_level:
+		print("Upgrade %s already at max level!" % upgrade_id)
+		return false
+
+	if save_data.meta_currency >= cost:
+		save_data.meta_currency -= cost
+		save_data.upgrades[upgrade_id] = current_level + 1
+		save_game()
+		print("Purchased %s (Level %d)" % [upgrade_id, current_level + 1])
+		return true
+	else:
+		print("Not enough Keeper Tokens!")
+		return false
+
+func get_meta_currency() -> int:
+	"""Get current meta-currency amount"""
+	return save_data.meta_currency

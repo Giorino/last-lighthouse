@@ -34,7 +34,7 @@ func _on_game_over() -> void:
 	var stats = {
 		"night": GameManager.current_night,
 		"enemies_killed": enemies_killed,
-		"resources_gathered": 0  # Not tracked for now
+		"resources_gathered": ResourceManager.get_total_resources_gathered()
 	}
 	show_game_over(stats)
 
@@ -79,10 +79,12 @@ func _on_retry_pressed() -> void:
 	print("Retrying...")
 	# Unpause before reloading
 	get_tree().paused = false
-	# Reload the game scene
-	get_tree().reload_current_scene()
+	# Go to keeper selection to start a new run
+	get_tree().change_scene_to_file("res://scenes/ui/keeper_selection.tscn")
 
 func _on_quit_pressed() -> void:
 	print("Quitting to main menu...")
-	# TODO: Load main menu when it exists
-	get_tree().quit()
+	# Unpause before changing scene
+	get_tree().paused = false
+	# Load main menu
+	get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")

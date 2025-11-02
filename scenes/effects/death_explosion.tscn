@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://c5bj7hf8kdm3x"]
+
+[ext_resource type="Script" path="res://scripts/effects/particle_effect.gd" id="1"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_death"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 3.0
+angle_min = 0.0
+angle_max = 360.0
+spread = 180.0
+initial_velocity_min = 30.0
+initial_velocity_max = 60.0
+gravity = Vector3(0, 50, 0)
+scale_min = 1.0
+scale_max = 2.0
+color = Color(0.8, 0.2, 0.2, 1)
+
+[node name="DeathExplosion" type="GPUParticles2D"]
+emitting = false
+amount = 20
+process_material = SubResource("ParticleProcessMaterial_death")
+lifetime = 0.6
+one_shot = true
+explosiveness = 0.9
+script = ExtResource("1")

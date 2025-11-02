@@ -30,8 +30,12 @@ func _ready() -> void:
 	super._ready()
 	add_to_group("turrets")
 
-	# Calculate cooldown from attack speed
-	attack_cooldown = 1.0 / attack_speed
+	# Apply upgrade bonuses
+	attack_damage += GameManager.get_turret_damage_bonus()
+	var fire_rate_multiplier = GameManager.get_turret_fire_rate_multiplier()
+
+	# Calculate cooldown from attack speed with upgrade multiplier
+	attack_cooldown = (1.0 / attack_speed) * fire_rate_multiplier
 
 func _process(delta: float) -> void:
 	# Check if powered (if power required)
@@ -107,6 +111,13 @@ func shoot_at_target() -> void:
 
 	# Add to scene
 	get_parent().add_child(bullet)
+
+	# Juice: Muzzle flash and light shake
+	if VisualEffectsManager:
+		var angle = direction.angle()
+		VisualEffectsManager.spawn_muzzle_flash(global_position, rad_to_deg(angle))
+	if EventBus:
+		EventBus.camera_shake.emit(0.05)  # Very light shake
 
 	# Visual feedback
 	if sprite:
