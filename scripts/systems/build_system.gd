@@ -168,24 +168,20 @@ func place_structure() -> void:
 		print("Invalid placement!")
 		return
 
-	# Get structure data for costs
-	var structure = selected_structure.instantiate()
-	if not structure.has_method("get"):
-		structure.queue_free()
-		return
-
-	var costs = structure.costs
+	# Get costs from ghost_instance (already initialized via _ready())
+	# The ghost_instance is already in the scene tree, so its _ready() has been called
+	var costs = ghost_instance.costs
 
 	# Check if can afford
 	if not ResourceManager.can_afford(costs):
 		print("Not enough resources!")
-		structure.queue_free()
 		return
 
 	# Spend resources
 	ResourceManager.spend_resources(costs)
 
-	# Place the structure
+	# Create the actual structure for placement
+	var structure = selected_structure.instantiate()
 	structure.global_position = grid_pos
 	get_parent().add_child(structure)
 

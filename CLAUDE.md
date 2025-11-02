@@ -321,11 +321,21 @@ Phase 1 prototype is functional and playable. Core systems are implemented with 
 - **Managers:** SaveManager (meta-progression/unlocks), AudioManager (ready for assets)
 - **Files:** +32 scripts/scenes total
 
-### Current Controls
-- **1-5:** Select/build structures | **R:** Repair | **B:** Toggle build | **Space:** Beam | **WASD:** Move | **E:** Interact
+### Phase 3 ✅ IN PROGRESS
+- **Keepers:** +Soldier (120HP/combat), +Scavenger (130spd/gathering), +Medic (heal lighthouse)
+- **Abilities:** F key activates unique keeper abilities (30s cooldown)
+  - Soldier: Rally (boost turret attack speed 2x/10s)
+  - Scavenger: Sixth Sense (reveal resource nodes)
+  - Medic: Emergency Heal (restore lighthouse 50% HP)
+- **Pause Menu:** ESC to pause/resume, quit option
+- **Game Over Screen:** Shows night reached, enemies killed, resources, tokens earned
+- **Files:** +3 keeper scripts/scenes, pause menu, game over screen
 
-### Next Phase Priorities
-- Resource node respawning, Pause menu, Game over/victory screens, Additional keepers (Soldier/Scavenger/Medic), Sprite assets, Audio assets
+### Current Controls
+- **1-5:** Select/build structures | **R:** Repair | **B:** Toggle build | **Space:** Beam | **F:** Keeper ability | **ESC:** Pause | **WASD:** Move | **E:** Interact
+
+### Next Priorities
+- Keeper selection screen, Main menu, Stat tracking integration, Resource respawning, Victory screen
 
 
 ## Development Workflow

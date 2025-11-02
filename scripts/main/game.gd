@@ -76,7 +76,5 @@ func _on_all_waves_completed() -> void:
 
 func _on_game_over() -> void:
 	print("=== GAME OVER ===")
-	# For Phase 1, just print a message
-	# In later phases, show game over screen
-	await get_tree().create_timer(2.0).timeout
-	get_tree().reload_current_scene()
+	# Game over screen handles displaying stats and restart logic
+	# Don't automatically reload - let the player choose via the game over screen

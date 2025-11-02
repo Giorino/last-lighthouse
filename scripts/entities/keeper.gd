@@ -15,6 +15,10 @@ var repair_target: Structure = null
 var repair_progress: float = 0.0
 var repair_time: float = 2.0  # Time to complete repair
 
+## Ability system
+@export var ability_cooldown: float = 30.0  # 30 second cooldown
+var ability_timer: float = 0.0
+
 ## Cached references
 @onready var sprite = $Sprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
@@ -49,6 +53,10 @@ func _physics_process(delta: float) -> void:
 		sprite.scale.x = -1 if input_dir.x < 0 else 1
 
 func _process(delta: float) -> void:
+	# Update ability cooldown
+	if ability_timer < ability_cooldown:
+		ability_timer += delta
+
 	# Handle repair input
 	if Input.is_action_pressed("repair"):
 		if not is_repairing:
@@ -56,7 +64,18 @@ func _process(delta: float) -> void:
 	elif is_repairing:
 		cancel_repair()
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
+	# Handle ability input (F key)
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_F:
+			if ability_timer >= ability_cooldown:
+				use_special_ability()
+				ability_timer = 0.0
+			else:
+				var time_left = ability_cooldown - ability_timer
+				print("Ability on cooldown: %.1fs remaining" % time_left)
+
+func _unhandled_input(_event: InputEvent) -> void:
 	# Shooting will be added later when we have projectiles
 	pass
 
@@ -201,3 +220,24 @@ func die() -> void:
 
 func heal(amount: int) -> void:
 	current_health = min(current_health + amount, max_health)
+
+## Special ability (override in subclasses)
+func use_special_ability() -> void:
+	print("%s special ability activated! (Base keeper has no special ability)" % keeper_name)
+	# Base implementation does nothing - subclasses override this
+	# Soldier: Rally (boost turrets)
+	# Scavenger: Sixth Sense (reveal resources)
+	# Medic: Emergency Heal (restore lighthouse HP)
+
+## Multiplier methods (for keeper bonuses)
+func get_damage_multiplier() -> float:
+	return 1.0
+
+func get_gather_speed_multiplier() -> float:
+	return 1.0
+
+func get_resource_multiplier() -> float:
+	return 1.0
+
+func get_repair_cost_multiplier() -> float:
+	return 1.0

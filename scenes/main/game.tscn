@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/main/game.gd" id="1_game"]
 [ext_resource type="PackedScene" path="res://scenes/gameplay/lighthouse.tscn" id="2_lighthouse"]
@@ -8,6 +8,9 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="6_hud"]
 [ext_resource type="Script" path="res://scripts/systems/navigation_manager.gd" id="7_nav"]
 [ext_resource type="Script" path="res://scripts/systems/wave_spawner.gd" id="8_wave"]
+[ext_resource type="PackedScene" path="res://scenes/ui/pause_menu.tscn" id="9_pause"]
+[ext_resource type="PackedScene" path="res://scenes/ui/settings_menu.tscn" id="10_settings"]
+[ext_resource type="PackedScene" path="res://scenes/ui/game_over_screen.tscn" id="11_gameover"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_game")
@@ -42,3 +45,9 @@ script = ExtResource("7_nav")
 script = ExtResource("8_wave")
 
 [node name="HUD" parent="." instance=ExtResource("6_hud")]
+
+[node name="PauseMenu" parent="." instance=ExtResource("9_pause")]
+
+[node name="SettingsMenu" parent="." instance=ExtResource("10_settings")]
+
+[node name="GameOverScreen" parent="." instance=ExtResource("11_gameover")]
