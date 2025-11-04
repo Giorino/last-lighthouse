@@ -2,6 +2,9 @@
 class_name Enemy
 extends CharacterBody2D
 
+## Preloaded scenes for drops
+const XP_GEM_SCENE = preload("res://scenes/pickups/xp_gem.tscn")
+
 ## Enemy configuration
 @export var enemy_name: String = "Crawler"
 @export var max_health: int = 50
@@ -9,6 +12,12 @@ extends CharacterBody2D
 @export var attack_damage: int = 10
 @export var attack_range: float = 20.0
 @export var attack_cooldown: float = 1.0
+@export var xp_value: int = 5  # XP dropped on death
+
+## Drop chances for resources
+@export var wood_drop_chance: float = 0.20  # 20%
+@export var metal_drop_chance: float = 0.10  # 10%
+@export var stone_drop_chance: float = 0.05  # 5%
 
 ## Current state
 var current_health: int = max_health
@@ -206,6 +215,12 @@ func die() -> void:
 	EventBus.enemy_died.emit(self)
 	print("%s died!" % enemy_name)
 
+	# Spawn XP gem (always)
+	spawn_xp_gem()
+
+	# Spawn resource drops (chance-based)
+	spawn_resource_drops()
+
 	# Juice: Death explosion particles, camera shake, hit pause
 	if VisualEffectsManager:
 		VisualEffectsManager.spawn_death_explosion(global_position)
@@ -222,3 +237,51 @@ func die() -> void:
 		await tween.finished
 
 	queue_free()
+
+func spawn_xp_gem() -> void:
+	"""Spawn an XP gem at the enemy's position"""
+	if XP_GEM_SCENE:
+		var xp_gem = XP_GEM_SCENE.instantiate() as XPGem
+		if xp_gem:
+			xp_gem.global_position = global_position
+			xp_gem.initialize(xp_value)
+
+			# Add to world (find pickup parent or use root)
+			var world = get_tree().get_first_node_in_group("world")
+			if world:
+				world.add_child(xp_gem)
+			else:
+				get_parent().add_child(xp_gem)
+
+func spawn_resource_drops() -> void:
+	"""Spawn resource drops based on chance"""
+	# Wood drops (20% chance, 2-5 quantity)
+	if randf() < wood_drop_chance:
+		spawn_resource_pickup(Constants.ResourceType.WOOD, randi_range(2, 5))
+
+	# Metal drops (10% chance, 1-3 quantity)
+	if randf() < metal_drop_chance:
+		spawn_resource_pickup(Constants.ResourceType.METAL, randi_range(1, 3))
+
+	# Stone drops (5% chance, 1-2 quantity)
+	if randf() < stone_drop_chance:
+		spawn_resource_pickup(Constants.ResourceType.STONE, randi_range(1, 2))
+
+func spawn_resource_pickup(resource_type: Constants.ResourceType, amount: int) -> void:
+	"""Spawn a resource pickup on the ground"""
+	# TODO: Create resource pickup scene/script
+	# For now, just add directly to ResourceManager
+	if ResourceManager:
+		match resource_type:
+			Constants.ResourceType.WOOD:
+				ResourceManager.add_resource(resource_type, amount)
+				print("Dropped %d wood" % amount)
+			Constants.ResourceType.METAL:
+				ResourceManager.add_resource(resource_type, amount)
+				print("Dropped %d metal" % amount)
+			Constants.ResourceType.STONE:
+				ResourceManager.add_resource(resource_type, amount)
+				print("Dropped %d stone" % amount)
+
+	# TODO: Phase 5C - Create physical resource pickup that player must collect
+	# (Similar to XP gems, but for resources)

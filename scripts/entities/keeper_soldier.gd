@@ -31,3 +31,9 @@ func use_special_ability() -> void:
 			turret.apply_buff(2.0, 10.0)
 
 	print("Rallied %d turrets! +100%% attack speed for 10s" % turrets.size())
+
+## Add soldier's starting weapon - Rifle
+func add_starting_weapon() -> void:
+	var rifle = preload("res://scripts/weapons/weapon_rifle.gd").new()
+	if weapon_manager:
+		weapon_manager.add_weapon(rifle)

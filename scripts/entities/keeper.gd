@@ -19,6 +19,9 @@ var repair_time: float = 2.0  # Time to complete repair
 @export var ability_cooldown: float = 30.0  # 30 second cooldown
 var ability_timer: float = 0.0
 
+## Weapon system (Phase 5)
+var weapon_manager: WeaponManager = null
+
 ## Cached references
 @onready var sprite = $Sprite2D
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
@@ -30,6 +33,13 @@ func _ready() -> void:
 	# Apply upgrade bonuses
 	speed *= GameManager.get_movement_speed_multiplier()
 	ability_cooldown *= GameManager.get_ability_cooldown_multiplier()
+
+	# Create weapon manager
+	weapon_manager = WeaponManager.new()
+	add_child(weapon_manager)
+
+	# Add starting weapon (override in subclasses)
+	add_starting_weapon()
 
 	# Register with GameManager
 	GameManager.keeper = self
@@ -245,3 +255,11 @@ func get_resource_multiplier() -> float:
 
 func get_repair_cost_multiplier() -> float:
 	return 1.0
+
+## Add starting weapon (override in subclasses)
+func add_starting_weapon() -> void:
+	# Engineer (base keeper) gets wrench
+	if keeper_name == "Engineer":
+		var wrench = preload("res://scripts/weapons/weapon_wrench.gd").new()
+		if weapon_manager:
+			weapon_manager.add_weapon(wrench)

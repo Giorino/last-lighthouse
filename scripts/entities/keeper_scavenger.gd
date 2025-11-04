@@ -33,3 +33,9 @@ func use_special_ability() -> void:
 			print("  - Resource at: %v" % node.global_position)
 
 	# Could add visual indicators here (glowing outlines, minimap pings, etc.)
+
+## Add scavenger's starting weapon - Dual Pistols
+func add_starting_weapon() -> void:
+	var pistols = preload("res://scripts/weapons/weapon_pistols.gd").new()
+	if weapon_manager:
+		weapon_manager.add_weapon(pistols)

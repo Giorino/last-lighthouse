@@ -45,3 +45,9 @@ func use_special_ability() -> void:
 			print("Healed lighthouse for %d HP!" % heal_amount)
 	else:
 		print("No lighthouse to heal!")
+
+## Add medic's starting weapon - Healing Bolt
+func add_starting_weapon() -> void:
+	var healing_bolt = preload("res://scripts/weapons/weapon_healing_bolt.gd").new()
+	if weapon_manager:
+		weapon_manager.add_weapon(healing_bolt)

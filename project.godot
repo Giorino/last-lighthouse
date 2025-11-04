@@ -23,6 +23,7 @@ ResourceManager="*res://scripts/autoload/resource_manager.gd"
 GameManager="*res://scripts/autoload/game_manager.gd"
 SaveManager="*res://scripts/autoload/save_manager.gd"
 AudioManager="*res://scripts/autoload/audio_manager.gd"
+LevelManager="*res://scripts/autoload/level_manager.gd"
 VisualEffectsManager="*res://scripts/autoloads/visual_effects_manager.gd"
 TimeScaleManager="*res://scripts/autoloads/time_scale_manager.gd"
 
