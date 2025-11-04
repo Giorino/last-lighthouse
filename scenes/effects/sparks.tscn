@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://b7hj9kl4mp6nq"]
+[gd_scene load_steps=3 format=3 uid="uid://b7hkakl4mp6nq"]
 
 [ext_resource type="Script" path="res://scripts/effects/particle_effect.gd" id="1"]
 
