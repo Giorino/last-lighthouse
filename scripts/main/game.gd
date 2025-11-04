@@ -45,12 +45,12 @@ func _process(_delta: float) -> void:
 		)
 
 func spawn_initial_resources() -> void:
-	# Spawn some wood nodes around the map
+	# Spawn some wood nodes around the map (Updated for 640x360)
 	for i in range(3):
 		var resource_node = RESOURCE_NODE_SCENE.instantiate()
 		resource_node.global_position = Vector2(
-			randf_range(50, 270),
-			randf_range(50, 130)
+			randf_range(100, 540),
+			randf_range(100, 260)
 		)
 		resource_node.resource_type = Constants.ResourceType.WOOD
 		resource_node.amount = 30
@@ -58,7 +58,7 @@ func spawn_initial_resources() -> void:
 
 	# Spawn a metal node
 	var metal_node = RESOURCE_NODE_SCENE.instantiate()
-	metal_node.global_position = Vector2(randf_range(50, 270), randf_range(50, 130))
+	metal_node.global_position = Vector2(randf_range(100, 540), randf_range(100, 260))
 	metal_node.resource_type = Constants.ResourceType.METAL
 	metal_node.amount = 20
 	add_child(metal_node)

@@ -15,16 +15,16 @@ var enemies_remaining: int = 0
 var is_spawning: bool = false
 var all_waves_complete: bool = false
 
-## Spawn points (edges of map)
+## Spawn points (edges of map) - Updated for 640x360 resolution
 var spawn_edges: Array = [
-	Vector2(160, 0),      # Top center
-	Vector2(320, 90),     # Right center
-	Vector2(160, 180),    # Bottom center
-	Vector2(0, 90),       # Left center
-	Vector2(80, 0),       # Top left
-	Vector2(240, 0),      # Top right
-	Vector2(320, 45),     # Right top
-	Vector2(320, 135)     # Right bottom
+	Vector2(320, 0),      # Top center
+	Vector2(640, 180),    # Right center
+	Vector2(320, 360),    # Bottom center
+	Vector2(0, 180),      # Left center
+	Vector2(160, 0),      # Top left
+	Vector2(480, 0),      # Top right
+	Vector2(640, 90),     # Right top
+	Vector2(640, 270)     # Right bottom
 ]
 
 func start_night(night_number: int) -> void:

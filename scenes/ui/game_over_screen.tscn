@@ -47,59 +47,59 @@ theme_override_constants/separation = 2
 
 [node name="Title" type="Label" parent="Control/Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 4
+theme_override_font_sizes/font_size = 7
 text = "LIGHTHOUSE FELL"
 horizontal_alignment = 1
 
 [node name="Spacer1" type="Control" parent="Control/Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 2)
+custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
 
 [node name="Stats" type="VBoxContainer" parent="Control/Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 1
+theme_override_constants/separation = 2
 
 [node name="NightLabel" type="Label" parent="Control/Panel/VBoxContainer/Stats"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 3
+theme_override_font_sizes/font_size = 5
 text = "Night Reached: 0"
 horizontal_alignment = 1
 
 [node name="EnemiesLabel" type="Label" parent="Control/Panel/VBoxContainer/Stats"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 3
+theme_override_font_sizes/font_size = 5
 text = "Enemies Killed: 0"
 horizontal_alignment = 1
 
 [node name="ResourcesLabel" type="Label" parent="Control/Panel/VBoxContainer/Stats"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 3
+theme_override_font_sizes/font_size = 5
 text = "Resources Gathered: 0"
 horizontal_alignment = 1
 
 [node name="TokensLabel" type="Label" parent="Control/Panel/VBoxContainer/Stats"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 3
+theme_override_font_sizes/font_size = 5
 text = "Keeper Tokens: +0"
 horizontal_alignment = 1
 
 [node name="Spacer2" type="Control" parent="Control/Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 2)
+custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
 
 [node name="Buttons" type="HBoxContainer" parent="Control/Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 6
 alignment = 1
 
 [node name="RetryButton" type="Button" parent="Control/Panel/VBoxContainer/Buttons"]
-custom_minimum_size = Vector2(22, 8)
+custom_minimum_size = Vector2(35, 14)
 layout_mode = 2
-theme_override_font_sizes/font_size = 3
+theme_override_font_sizes/font_size = 5
 text = "Retry"
 
 [node name="QuitButton" type="Button" parent="Control/Panel/VBoxContainer/Buttons"]
-custom_minimum_size = Vector2(22, 8)
+custom_minimum_size = Vector2(35, 14)
 layout_mode = 2
-theme_override_font_sizes/font_size = 3
+theme_override_font_sizes/font_size = 5
 text = "Quit"
