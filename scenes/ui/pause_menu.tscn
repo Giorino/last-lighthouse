@@ -46,25 +46,25 @@ grow_vertical = 2
 
 [node name="Title" type="Label" parent="Control/Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 7
 text = "PAUSED"
 horizontal_alignment = 1
 
 [node name="Spacer1" type="Control" parent="Control/Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 8)
+custom_minimum_size = Vector2(0, 6)
 layout_mode = 2
 
 [node name="ResumeButton" type="Button" parent="Control/Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 5
 text = "Resume (ESC)"
 
 [node name="SettingsButton" type="Button" parent="Control/Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 5
 text = "Settings"
 
 [node name="QuitButton" type="Button" parent="Control/Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 5
 text = "Quit"

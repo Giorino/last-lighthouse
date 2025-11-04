@@ -32,22 +32,22 @@ layout_mode = 2
 
 [node name="WoodLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/ResourcePanel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 5
 text = "Wood: 50"
 
 [node name="MetalLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/ResourcePanel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 5
 text = "Metal: 20"
 
 [node name="StoneLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/ResourcePanel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 5
 text = "Stone: 30"
 
 [node name="FuelLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/ResourcePanel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 5
 text = "Fuel: 10"
 
 [node name="CenterPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/TopBar"]
@@ -60,13 +60,13 @@ layout_mode = 2
 
 [node name="PhaseLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/CenterPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 6
 text = "NIGHT"
 horizontal_alignment = 1
 
 [node name="TimeLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/CenterPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 6
 text = "01:00"
 horizontal_alignment = 1
 
@@ -80,11 +80,11 @@ layout_mode = 2
 
 [node name="HPLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/LighthousePanel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 5
 text = "Lighthouse: 500/500"
 
 [node name="HPBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/TopBar/LighthousePanel/VBoxContainer"]
-custom_minimum_size = Vector2(60, 6)
+custom_minimum_size = Vector2(50, 4)
 layout_mode = 2
 max_value = 500.0
 value = 500.0
@@ -106,18 +106,18 @@ layout_mode = 2
 
 [node name="LevelLabel" type="Label" parent="MarginContainer/VBoxContainer/BottomBar/PlayerPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 5
 text = "Level 1"
 
 [node name="XPBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/BottomBar/PlayerPanel/VBoxContainer"]
-custom_minimum_size = Vector2(100, 6)
+custom_minimum_size = Vector2(80, 4)
 layout_mode = 2
 max_value = 10.0
 show_percentage = false
 
 [node name="XPLabel" type="Label" parent="MarginContainer/VBoxContainer/BottomBar/PlayerPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 5
 text = "0/10 XP"
 
 [node name="WeaponPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/BottomBar"]

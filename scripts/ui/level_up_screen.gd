@@ -50,14 +50,14 @@ func _on_level_up_choices_ready(options: Array) -> void:
 func create_choice_button(option: Dictionary, index: int) -> void:
 	"""PHASE 5D: Create an animated button for an upgrade choice"""
 	var button = Button.new()
-	button.custom_minimum_size = Vector2(100, 70)
+	button.custom_minimum_size = Vector2(55, 45)
 
 	# Set button text
 	var button_text = "%s\n%s" % [option.name, option.description]
 	button.text = button_text
 
 	# Style the button for pixel art
-	button.add_theme_font_size_override("font_size", 8)
+	button.add_theme_font_size_override("font_size", 5)
 
 	# PHASE 5D: Add custom styling
 	var normal_style = StyleBoxFlat.new()
