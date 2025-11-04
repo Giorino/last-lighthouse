@@ -38,10 +38,15 @@ func _process_day_phase(delta: float) -> void:
 		# PHASE 5: Go directly to night (no transition)
 		start_night_phase()
 
-func _process_night_phase(_delta: float) -> void:
-	# Night ends when all waves are completed
-	# This is handled by the wave spawner emitting all_waves_completed
-	pass
+func _process_night_phase(delta: float) -> void:
+	# PHASE 5: Timer counts down during night
+	time_remaining -= delta
+
+	# Night can end in two ways:
+	# 1. Timer reaches 0
+	# 2. All waves completed (handled by wave spawner)
+	if time_remaining <= 0:
+		end_night_phase()
 
 func start_day_phase() -> void:
 	current_phase = Constants.Phase.DAY
