@@ -63,7 +63,7 @@ func start_day_phase() -> void:
 
 	# PHASE 5: Enable building during day
 	GameManager.enable_building = true
-	GameManager.enable_scavenging = false  # No scavenging in Phase 5
+	GameManager.enable_scavenging = true  # Allow gathering resource nodes
 
 	EventBus.day_started.emit()
 

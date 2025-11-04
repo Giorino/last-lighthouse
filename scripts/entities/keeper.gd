@@ -230,6 +230,17 @@ func take_damage(amount: int) -> void:
 
 func die() -> void:
 	print("Keeper died!")
+
+	# Trigger game over
+	EventBus.game_over.emit()
+
+	# Visual death effect
+	if sprite:
+		var tween = create_tween()
+		tween.tween_property(sprite, "modulate:a", 0.0, 0.5)
+		tween.tween_property(sprite, "scale", Vector2(1.5, 1.5), 0.5)
+		await tween.finished
+
 	queue_free()
 
 func heal(amount: int) -> void:
