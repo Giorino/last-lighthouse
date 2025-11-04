@@ -35,3 +35,6 @@ signal game_won
 
 # UI signals
 signal show_notification(message: String)
+
+# Camera signals
+signal camera_shake(trauma: float)

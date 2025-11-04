@@ -16,6 +16,7 @@ extends CanvasLayer
 @onready var lighthouse_hp_bar: ProgressBar = $MarginContainer/HBoxContainer/LighthousePanel/VBoxContainer/HPBar
 
 func _ready() -> void:
+	add_to_group("hud")
 	# Connect to resource signals
 	EventBus.resource_changed.connect(_on_resource_changed)
 	EventBus.lighthouse_health_changed.connect(_on_lighthouse_health_changed)

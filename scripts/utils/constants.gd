@@ -20,7 +20,7 @@ enum Phase {
 const TILE_SIZE: int = 16
 
 ## Day phase duration in seconds
-const DAY_DURATION: float = 300.0  # 5 minutes
+const DAY_DURATION: float = 30.0  # 5 minutes
 
 ## Night phase base duration in seconds
 const NIGHT_DURATION: float = 180.0  # 3 minutes

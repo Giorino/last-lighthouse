@@ -4,13 +4,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Last Lighthouse** is a roguelike tower defense game built in Godot 4.5. The core concept combines Dead Cells-style roguelike progression with They Are Billions tower defense mechanics. Players defend a lighthouse against nightly horrors while scavenging during the day. Features permadeath with meta-progression through unlockable lighthouse keepers.
+**Last Lighthouse** is a hybrid roguelike survivor-shooter + tower defense game built in Godot 4.5. The core concept combines **Vampire Survivors-style auto-combat** with **They Are Billions tower defense mechanics** and **Dead Cells-style roguelike progression**. Players defend a lighthouse against endless waves while actively fighting with auto-aim weapons, collecting XP to level up mid-run, and building defensive structures during short day phases.
 
 **Key Details:**
 - Engine: Godot 4.5 (GDScript primary language)
-- Genre: Roguelike + Tower Defense + Resource Management
+- Genre: Roguelike Survivor-Shooter + Tower Defense + Resource Management
+- Core Gameplay: Auto-aim combat + In-run leveling + Structure building + Endless survival
 - Art Style: Atmospheric pixel art (320x180 base resolution, scaled 6x to 1920x1080)
 - Target: PC (Windows, macOS, Linux) via Steam
+
+**Hybrid Game Loop (NEW DESIGN - Phase 5):**
+```
+Night Wave (enemies attack, player fights with auto-aim weapons)
+    ↓
+Collect XP gems from dead enemies → Level up → Choose upgrade (weapon/stat/ability)
+    ↓
+Short Day Phase (30 seconds - build structures with resources)
+    ↓
+Repeat endlessly until player dies or lighthouse is destroyed
+```
+
+**No Win Condition:** Game is endless survival - the goal is to survive as long as possible and reach the highest night.
 
 ## Development Commands
 
@@ -306,197 +320,468 @@ Phase 1 prototype is functional and playable. Core systems are implemented with 
 
 ## Implementation Progress
 
-### Session 1 - Phase 1 Prototype (November 2024)
+### Phase 1 ✅ COMPLETE
+- **Core Loop:** Day(300s) → Transition(30s) → Night(waves) cycle working
+- **Systems:** 4 autoloads, pathfinding (A*), combat, building, resource management
+- **Content:** 1 enemy (Crawler), 1 structure (Wall), player with beam ability
+- **Status:** Functional with placeholders, all base mechanics operational
 
-**Completed Work:**
+### Phase 2 ✅ COMPLETE
+- **Enemies:** +Spitter (ranged/150rng), +Brute (tank/1.5x structure dmg), +Swarm (fast/100spd)
+- **Structures:** +Barricade (cheap), +Turret (auto-aim), +Trap (trigger dmg), +Generator (powers turrets)
+- **Wave System:** Budget-based composition, scales by night (N1-5: crawlers only → N16+: all types)
+- **Repair:** Hold R near structure, costs 50% original, 2s channel
+- **Build UI:** Keys 1-5 select structures, red/green ghost validation
+- **Managers:** SaveManager (meta-progression/unlocks), AudioManager (ready for assets)
+- **Files:** +32 scripts/scenes total
 
-#### Project Configuration
-- **project.godot** - Configured core settings:
-  - Set main scene to `res://scenes/main/game.tscn`
-  - Configured pixel-perfect rendering (320x180 base, 6x scaled to 1920x1080)
-  - Added 4 autoload singletons: Constants, EventBus, ResourceManager, GameManager
-  - Defined all input actions (move, interact, build_mode, lighthouse_beam, shoot, pause)
-  - Set texture filter to nearest-neighbor for pixel art
+### Phase 3 ✅ COMPLETE
+- **Keepers:** +Soldier (120HP/combat), +Scavenger (130spd/gathering), +Medic (heal lighthouse)
+- **Abilities:** F key activates unique keeper abilities (30s cooldown)
+  - Soldier: Rally (boost turret attack speed 2x/10s)
+  - Scavenger: Sixth Sense (reveal resource nodes)
+  - Medic: Emergency Heal (restore lighthouse 50% HP)
+- **Pause Menu:** ESC to pause/resume, quit option
+- **Game Over Screen:** Shows night reached, enemies killed, resources, tokens earned
+- **Files:** +3 keeper scripts/scenes, pause menu, game over screen
 
-- **.gitignore** - Added `.DS_Store` exclusion for macOS
+### Phase 4 🎨 IN PROGRESS (Polish & Juice)
+- **Particle Systems:** ✅ Hit effects, death explosions, muzzle flash, build particles
+- **Camera Juice:** ✅ Trauma-based screen shake, smooth follow, zoom support
+- **Hit Pause:** ✅ Freeze frames on impacts (light/medium/heavy)
+- **Visual Effects Manager:** ✅ Centralized particle spawning system
+- **Time Scale Manager:** ✅ Hit pause and slow-motion support
+- **Integration:** ✅ Particles + shake on all combat events, building, destruction
+- **Art Pipeline:** ✅ Asset structure documented in `docs/ART_ASSET_GUIDE.md`
+- **Status:** Technical juice systems complete, ready for art/audio assets
+- **Files:** +4 particle scenes, CameraController, VisualEffectsManager, TimeScaleManager
 
-- **.cursorrules** - Created development guidelines for AI assistants
+### Current Controls
+- **1-5:** Select/build structures | **R:** Repair | **B:** Toggle build | **Space:** Beam | **F:** Keeper ability | **ESC:** Pause | **WASD:** Move | **E:** Interact
 
-- **HOW_TO_PLAY.md** - Created player guide for Phase 1 prototype
+### Next Priorities (Phase 4 Completion)
+- Add sound effects (combat, building, UI, ambient)
+- Add music tracks (day/night themes)
+- Polish camera bounds and follow behavior
+- Add more particle variety (blood, sparks, smoke)
 
-#### Core Systems (scripts/autoload/)
-- **constants.gd** - Game-wide constants and enums
-  - ResourceType enum (WOOD, METAL, STONE, FUEL)
-  - GamePhase enum (DAY, TRANSITION, NIGHT)
-  - GameState enum (PLAYING, PAUSED, GAME_OVER, VICTORY)
-  - Grid settings (TILE_SIZE = 16)
-  
-- **event_bus.gd** - Global signal hub for decoupled communication
-  - Phase change signals (day_started, transition_started, night_started)
-  - Resource signals (resource_changed, resource_gathered)
-  - Combat signals (enemy_died, enemy_spawned, structure_damaged)
-  - Game state signals (game_over, night_completed, lighthouse_damaged)
+### Phase 5 🔫 IN PROGRESS (Hybrid Combat & Leveling System)
+**MAJOR DESIGN PIVOT:** Transforming from pure tower defense into **Vampire Survivors + Tower Defense hybrid**
 
-- **resource_manager.gd** - Resource tracking system
-  - Manages Wood, Metal, Stone, Fuel quantities
-  - Provides add_resource() and spend_resources() methods
-  - Emits signals on resource changes
-  - Starting resources: 20 Wood, 10 Metal, 15 Stone, 50 Fuel
+---
 
-- **game_manager.gd** - Game state and flow control
-  - Tracks current phase, night number, game state
-  - Manages pause/unpause functionality
-  - Handles game over and victory conditions
-  - Coordinates with DayNightCycle for phase transitions
+## Design Rationale & User Vision
 
-#### Entity Scripts (scripts/entities/)
-- **keeper.gd** - Player character controller
-  - CharacterBody2D with 50 movement speed
-  - Health system (100 HP)
-  - Resource gathering interaction system (2s hold time)
-  - Basic movement with WASD/arrows
-  - Signals for health changes and resource gathering
+**User's Core Idea:**
+"Like Vampire Survivors or Brotato, we should have levels when we play. Collect XP from ground that enemies drop, level up, and choose upgrades with keeper tokens. Remove win condition for endless survival. Player should shoot based on character choice with auto-aim. Different characters deal different damage and have different attack types."
 
-- **enemy.gd** - Base enemy class
-  - CharacterBody2D with pathfinding toward lighthouse
-  - Health system (50 HP base)
-  - Attack system (10 damage base, 1s cooldown)
-  - State machine: IDLE, PATHFINDING, ATTACKING, DEAD
-  - Targets lighthouse or structures blocking path
+**Key User Requirements (IMPORTANT - READ THIS):**
+1. ✅ **KEEP building structures** - Don't remove the tower defense aspect
+2. ✅ **KEEP day/night cycle** - But modify it significantly
+3. ✅ **KEEP resource gathering** - Resources drop from enemies now
+4. ✅ **NO win condition** - Endless survival, secure the lighthouse as long as possible
+5. ✅ **Auto-aim combat** - Player attacks must be automatic (like Vampire Survivors)
+6. ✅ **In-run leveling** - Level up during the run, choose upgrades (NOT just meta-progression)
+7. ✅ **Multiple weapon slots** - Start with 6 slots, 1 filled, gain more through leveling
+8. ✅ **Class-based weapons** - Each keeper has unique starting weapon and damage scaling
 
-- **lighthouse.gd** - Central objective structure
-  - Area2D representing lighthouse
-  - Health system (500 HP)
-  - Beam ability (fuel-powered stun, 100 radius, 5 fuel/sec)
-  - Takes damage from enemies
-  - Emits lighthouse_damaged signal
+**What Makes This Unique:**
+- **Not pure Vampire Survivors** - We have building phase and structures
+- **Not pure tower defense** - Player actively fights with auto-aim weapons
+- **Hybrid gameplay loop** - Active combat (night) + Strategic building (day) + In-run progression (leveling)
 
-- **resource_node.gd** - Gatherable resource points
-  - StaticBody2D representing resource deposits
-  - Type-based resources (wood/metal)
-  - Gather time: 2 seconds
-  - Starting amount: 50 resources per node
-  - Fully depletable (queue_free on empty)
+---
 
-- **structure.gd** - Base buildable structure class
-  - StaticBody2D with health system (100 HP base)
-  - Cost dictionary for building requirements
-  - Takes damage from enemies
-  - Emits structure_destroyed signal
+## Modified Day/Night Cycle (CRITICAL CHANGE)
 
-#### Gameplay Systems (scripts/gameplay/ & scripts/systems/)
-- **day_night_cycle.gd** - Central game loop manager
-  - Day Phase: 300 seconds (5 minutes)
-  - Transition Phase: 30 seconds
-  - Night Phase: Variable duration based on enemies
-  - Auto-advances phases with countdown timers
-  - Emits signals for phase changes
-  - Coordinates with GameManager and spawning
+**OLD SYSTEM (Phases 1-4):**
+```
+Day (300s) → Transition (10s) → Night (180-300s) → Day → repeat
+```
 
-- **build_system.gd** - Structure placement system
-  - Grid-based placement (16x16 tiles)
-  - Ghost preview showing valid/invalid placement
-  - Instant construction with resource checks
-  - Currently supports Wall structure only
-  - Collision detection for placement validation
+**NEW SYSTEM (Phase 5+):**
+```
+START → Night 1 (60s wave) → Day 1 (30s prep) → Night 2 (90s wave) → Day 2 (30s) → Night 3 (120s) → repeat
+```
 
-#### Main Scene & UI (scripts/main/ & scripts/ui/)
-- **game.gd** - Root scene controller
-  - Initializes game systems
-  - Spawns player keeper and lighthouse
-  - Creates resource nodes procedurally
-  - Sets up day/night cycle
-  - Manages enemy spawning during night phases
-  - Wave-based spawning (night_number * 3 crawlers)
+**Specific Changes:**
+- **Start with night** (not day) - Short first wave to ease player in
+- **Day phase is now 30 seconds** (down from 300s) - Just enough time to build 1-2 structures
+- **Night duration increases progressively:**
+  - Night 1: 60 seconds
+  - Night 2: 90 seconds
+  - Night 3: 120 seconds
+  - Night 4: 150 seconds
+  - Night 5+: 180 seconds (capped at 3 minutes)
+- **No transition phase** - Direct Night → Day → Night switching
+- **Day phase purpose:** Quickly build defenses with resources gathered during night
 
-- **hud.gd** - HUD overlay
-  - Resource display (Wood, Metal, Stone, Fuel)
-  - Phase indicator (DAY/TRANSITION/NIGHT)
-  - Phase timer countdown
-  - Lighthouse HP bar
-  - Updates in real-time via EventBus signals
+**Why This Works:**
+- Day becomes a "breather" to spend resources, not a long exploration phase
+- Player is mostly in combat (engaging, like VS)
+- Building is strategic (plan defenses quickly)
+- Resources come from combat, not scavenging
 
-#### Scene Files (scenes/)
-All scenes created with placeholder graphics (ColorRect/Sprites):
+---
 
-- **main/game.tscn** - Root game scene
-  - Contains camera, UI layer, game world
-  - Manages spawning and game flow
+## Weapon System (NEW - Core Feature)
 
-- **characters/keeper_base.tscn** - Player character
-  - CharacterBody2D with collision
-  - Blue rectangle placeholder (16x16)
+**Architecture:**
+```gdscript
+# Each keeper has WeaponManager component
+class_name WeaponManager extends Node
 
-- **enemies/crawler.tscn** - Basic enemy type
-  - CharacterBody2D with pathfinding
-  - Green rectangle placeholder (12x12)
-  - 50 HP, 40 speed, 10 damage
+var weapon_slots: Array[Weapon] = []  # Max 6 slots
+var max_slots: int = 6
 
-- **environment/resource_node.tscn** - Resource gathering points
-  - StaticBody2D with interaction area
-  - Brown (wood) or gray (metal) rectangles
+func _process(delta: float):
+    for weapon in weapon_slots:
+        if weapon:
+            weapon.try_fire(delta)  # Each weapon auto-fires independently
+```
 
-- **gameplay/lighthouse.tscn** - Central objective
-  - Area2D with large collision shape
-  - White/yellow rectangle placeholder (32x48)
-  - 500 HP, beam ability
+**Weapon Base Class:**
+```gdscript
+class_name Weapon extends Node2D
 
-- **structures/wall.tscn** - Basic defensive structure
-  - StaticBody2D with collision
-  - Tan rectangle placeholder (16x16)
-  - Cost: 5 Wood, 10 Stone
-  - 100 HP
+# Core stats
+@export var weapon_name: String = "Pistol"
+@export var damage: int = 10
+@export var fire_rate: float = 1.0  # attacks per second
+@export var range: float = 150.0
+@export var projectile_speed: float = 300.0
+@export var projectile_count: int = 1  # Can shoot multiple projectiles
 
-- **ui/hud.tscn** - Game HUD
-  - Resource counters, phase display, timer, HP bar
-  - Updates via EventBus signals
+# Auto-aim logic
+func try_fire(delta: float):
+    cooldown_timer -= delta
+    if cooldown_timer <= 0:
+        var target = find_nearest_enemy()
+        if target:
+            fire_at_target(target)
+            cooldown_timer = 1.0 / fire_rate
 
-**What Works:**
-✅ Full day/night cycle with automatic phase transitions
-✅ Player movement and resource gathering
-✅ Resource management system (gain/spend)
-✅ Build mode with grid placement
-✅ Enemy spawning and pathfinding to lighthouse
-✅ Combat (enemies attack lighthouse/structures)
-✅ Lighthouse beam ability (stuns enemies, drains fuel)
-✅ Wave progression (more enemies each night)
-✅ Game over on lighthouse destruction
-✅ Real-time HUD updates
+func find_nearest_enemy() -> Enemy:
+    # Get all enemies in range
+    # Return closest one
+```
 
-**Known Limitations (Phase 1):**
-⚠️ Placeholder graphics (colored rectangles only)
-⚠️ Basic direct pathfinding (no A* or NavigationServer2D yet)
-⚠️ Only one enemy type (Crawler)
-⚠️ Only one structure type (Wall)
-⚠️ No sound or music
-⚠️ No save/load system
-⚠️ No keeper selection (Engineer only)
-⚠️ No pause menu
-⚠️ No proper win condition (runs indefinitely after night victory)
-⚠️ Resource nodes don't respawn
-⚠️ No building repair system
-⚠️ Enemy pathfinding doesn't recalculate around walls
+**Starting Weapons (One Per Keeper):**
+1. **Engineer - Wrench Throw**
+   - Damage: 25
+   - Fire Rate: 0.8/s (slower)
+   - Range: 80 (melee range)
+   - Projectile: Spinning wrench that returns like boomerang
+   - Theme: High damage, close range, safe/reliable
 
-**Next Steps for Phase 2:**
-- Implement proper A*/NavigationServer2D pathfinding
-- Add more enemy types (Spitter, Brute, Swarm)
-- Add more structures (Barricade, Turret, Trap, Generator)
-- Add proper sprite assets
-- Implement save/load system
-- Add pause menu
-- Add keeper selection screen
-- Add meta-progression unlocks
-- Add sound effects and music
-- Improve AI to recalculate paths around structures
-- Add resource node respawning
-- Add structure repair mechanic
+2. **Soldier - Rifle**
+   - Damage: 15
+   - Fire Rate: 1.5/s (medium)
+   - Range: 200 (long range)
+   - Projectile: Bullet with muzzle flash
+   - Theme: Balanced, long range, military
 
-**Technical Notes:**
-- All systems use signal-based architecture via EventBus
-- Minimal direct coupling between components
-- Grid-based coordinate system (16x16 tiles)
-- Resource costs stored as Dictionaries in structure scripts
-- .uid files generated by Godot 4.4+ for resource tracking
+3. **Scavenger - Dual Pistols**
+   - Damage: 8
+   - Fire Rate: 3.0/s (very fast)
+   - Range: 120 (medium range)
+   - Projectile: Alternating left/right pistol shots
+   - Theme: Fast, aggressive, spray damage
+
+4. **Medic - Healing Bolt**
+   - Damage: 10
+   - Fire Rate: 1.0/s
+   - Range: 150
+   - Projectile: Green energy bolt
+   - Special: On hit, has 30% chance to heal nearest structure for 5 HP
+   - Theme: Support, dual-purpose
+
+**Weapon Progression:**
+- Level up → Choose "New Weapon" option → Get random weapon from pool
+- Fill all 6 slots for maximum DPS
+- Can also upgrade existing weapons (damage, fire rate, projectiles, range)
+
+---
+
+## XP & Leveling System (NEW - Core Feature)
+
+**XP Gem Drops:**
+```gdscript
+# When enemy dies:
+func die():
+    # ... existing death logic ...
+    spawn_xp_gem(xp_value)
+
+# XP values by enemy type:
+- Crawler: 5 XP
+- Spitter: 8 XP
+- Brute: 15 XP
+- Swarm: 3 XP (but spawns in groups)
+- Boss: 50 XP
+```
+
+**XP Gem Behavior:**
+- Small glowing orb (different color per value?)
+- Stays on ground for 30 seconds, then fades
+- Auto-magnet toward player when within 40 pixels
+- Pickup is automatic (just walk over it)
+- Visual/audio feedback on collection
+
+**Leveling Curve:**
+```gdscript
+# Formula: base_xp * (level ^ 1.5)
+func get_xp_for_level(level: int) -> int:
+    return int(10 * pow(level, 1.5))
+
+# Results:
+Level 1: 10 XP
+Level 2: 28 XP  (cumulative: 38)
+Level 3: 52 XP  (cumulative: 90)
+Level 4: 80 XP  (cumulative: 170)
+Level 5: 112 XP (cumulative: 282)
+... (scales exponentially)
+```
+
+**Level-Up Flow:**
+1. XP bar fills to threshold
+2. Level up triggered
+3. **Game pauses** (Engine.time_scale = 0.0) OR **slows heavily** (0.1)
+4. UI overlay appears with 3 random upgrade choices
+5. Player clicks one option
+6. Upgrade applied immediately
+7. Game resumes
+8. Visual feedback (level-up particle burst, sound effect)
+
+**Upgrade Pool (Initial Set):**
+```gdscript
+# Weapon-related (60% weight)
+- "New Weapon" (if slots < 6)
+- "+20% Damage" (all weapons)
+- "+30% Fire Rate" (all weapons)
+- "+1 Projectile" (all weapons shoot one extra)
+- "+30% Range" (all weapons)
+
+# Stat upgrades (30% weight)
+- "+10% Movement Speed"
+- "+20 Max HP"
+- "+5 HP Regen per second"
+
+# Economy (10% weight)
+- "+25% Resource Drop Rate"
+- "-10% Build Costs"
+
+# Later: Structure blueprints (Phase 6+)
+```
+
+**UI Design:**
+```
+╔═══════════════════════════════════════╗
+║           LEVEL UP! (Level 5)         ║
+╠═══════════════════════════════════════╣
+║                                       ║
+║  ┌───────────┐ ┌───────────┐ ┌──────────┐
+║  │ NEW WEAPON│ │ +20% DMG  │ │ +10% SPD │
+║  │           │ │           │ │          │
+║  │  Shotgun  │ │ All Wpns  │ │ Movement │
+║  │ [Icon]    │ │ [Icon]    │ │ [Icon]   │
+║  └───────────┘ └───────────┘ └──────────┘
+║       [CLICK TO CHOOSE]                ║
+╚═══════════════════════════════════════╝
+```
+
+---
+
+## Resource Drop System (MODIFIED)
+
+**OLD:** Resources gathered from nodes during day phase
+**NEW:** Resources drop from enemies during night combat
+
+**Drop Rates:**
+```gdscript
+func die():
+    spawn_xp_gem(xp_value)  # Always
+
+    # Random resource drops
+    if randf() < 0.20:  # 20% chance
+        spawn_resource(ResourceType.WOOD, randi_range(2, 5))
+
+    if randf() < 0.10:  # 10% chance
+        spawn_resource(ResourceType.METAL, randi_range(1, 3))
+
+    if randf() < 0.05:  # 5% chance
+        spawn_resource(ResourceType.STONE, randi_range(1, 2))
+```
+
+**Resource Pickup Behavior:**
+- Small glowing items (Wood = brown, Metal = gray, Stone = white)
+- Auto-collect on player contact (like XP gems)
+- Persist longer than XP (60 seconds before fading)
+- Visual distinction from XP gems
+
+**Why This Works:**
+- Combat is rewarding (get resources AND xp)
+- No need for long scavenging phase
+- Resource nodes can be removed OR repurposed as static bonuses
+
+---
+
+## Endless Survival (Win Condition Removed)
+
+**OLD:** Survive 20 nights OR reach target → Victory screen
+**NEW:** No victory condition, only defeat conditions
+
+**Game Over Triggers:**
+1. Player dies (keeper HP reaches 0)
+2. Lighthouse destroyed (lighthouse HP reaches 0)
+
+**Goal:** Survive as many nights as possible, reach highest night number
+
+**Leaderboard/Stats Tracking:**
+- Highest night reached
+- Total enemies killed
+- Total XP gained
+- Most powerful weapon combo
+- Most resources collected
+
+**Meta-Progression Still Exists:**
+- Keeper Tokens earned based on performance (1 per night + bonuses)
+- Spent in permanent upgrade shop between runs
+- Unlock new keepers, starting bonuses, etc.
+
+---
+
+## Implementation Checklist
+
+**Phase 5A - Core Combat:**
+- [x] Create Weapon base class (`scripts/weapons/weapon.gd`)
+- [x] Create WeaponManager component for Keeper
+- [x] Implement auto-aim targeting system
+- [x] Create 4 starting weapons (one per keeper)
+- [x] Add weapon firing and projectile spawning
+- [x] Test weapon slot system (add/remove weapons)
+
+**Phase 5B - XP & Leveling:**
+- [x] Create XP gem entity (`scripts/pickups/xp_gem.gd`)
+- [x] Add XP drop logic to Enemy.die()
+- [x] Create LevelManager autoload
+- [x] Implement XP tracking and leveling curve
+- [x] Build level-up UI scene
+- [x] Create upgrade pool system
+- [x] Test level-up flow (pause, choose, resume)
+
+**Phase 5C - Integration:**
+- [x] Add resource drop logic to Enemy.die() (implemented as auto-collect for now)
+- [ ] Modify DayNightCycle timings (start with night, 30s day)
+- [ ] Remove win condition checks from GameManager
+- [ ] Update HUD to show weapon slots and XP bar
+- [ ] Balance tuning (XP values, weapon stats, drop rates)
+- [ ] Add visual/audio feedback for pickups and level-ups
+
+**Phase 5D - Polish:**
+- [ ] Add weapon icons/UI
+- [ ] Particle effects for level-up
+- [ ] Sound effects for pickups
+- [ ] Test full gameplay loop
+- [ ] Update CLAUDE.md progress log
+
+---
+
+## Progress Log (Phase 5)
+
+**Format:** `[Date] - Feature - Files Changed - Notes`
+
+```
+[2025-11-02] - Weapon Base Class - scripts/weapons/weapon.gd - Created auto-aim targeting system with find_nearest_enemy(), fire_at_target() with multi-projectile support, upgrade application system
+
+[2025-11-02] - WeaponManager Component - scripts/weapons/weapon_manager.gd - Created weapon slot manager (6 slots), auto-fire loop in _process(), upgrade multiplier system (damage/fire rate/range), add/remove weapon functions
+
+[2025-11-02] - Keeper Weapon Integration - scripts/entities/keeper.gd - Added weapon_manager property, instantiate WeaponManager in _ready(), added add_starting_weapon() function
+
+[2025-11-02] - Engineer Starting Weapon - scripts/weapons/weapon_wrench.gd, keeper.gd - Wrench weapon (25 dmg, 0.8 fire rate, 80 range), added to base keeper
+
+[2025-11-02] - Soldier Starting Weapon - scripts/weapons/weapon_rifle.gd, keeper_soldier.gd - Rifle weapon (15 dmg, 1.5 fire rate, 200 range), added to Soldier keeper
+
+[2025-11-02] - Scavenger Starting Weapon - scripts/weapons/weapon_pistols.gd, keeper_scavenger.gd - Dual Pistols (8 dmg, 3.0 fire rate, 120 range), added to Scavenger keeper
+
+[2025-11-02] - Medic Starting Weapon - scripts/weapons/weapon_healing_bolt.gd, keeper_medic.gd - Healing Bolt (10 dmg, 1.0 fire rate, 150 range, 30% heal chance), added to Medic keeper with heal_nearby_structure() mechanic
+
+[2025-11-02] - XP Gem Pickup - scripts/pickups/xp_gem.gd, scenes/pickups/xp_gem.tscn - Created XP gem with auto-magnet (40px range), 30s lifetime, visual size/color based on XP value (5/15/50 XP = green/blue/gold)
+
+[2025-11-02] - Enemy XP Drops - scripts/entities/enemy.gd - Added xp_value export (5 XP default), spawn_xp_gem() on death, resource drop chances (Wood 20%, Metal 10%, Stone 5%), XP_GEM_SCENE preload
+
+[2025-11-02] - LevelManager Autoload - scripts/autoload/level_manager.gd, project.godot - Created level manager with XP tracking, exponential leveling curve (base 10 * level^1.5), upgrade pool system (10 upgrade types), apply_upgrade() for stat modifications
+
+[2025-11-02] - Level-Up UI - scripts/ui/level_up_screen.gd, scenes/ui/level_up_screen.tscn - Created level-up screen (CanvasLayer) with PanelContainer UI, 3-choice button layout, game pause on level-up, signal connection to LevelManager.level_up_choice_ready
+
+[2025-11-02] - Game Integration - scenes/main/game.tscn - Added LevelUpScreen to game scene, registered LevelManager as autoload (order: after AudioManager, before VisualEffectsManager)
+```
+
+**Phase 5A Status: ✅ COMPLETE** - All 4 starting weapons created and integrated!
+
+**Phase 5B Status: ✅ COMPLETE** - XP system, leveling, and level-up UI fully implemented!
+
+---
+
+## Key Technical Decisions
+
+1. **Weapon Slots = 6 (Fixed)**
+   - Allows meaningful progression
+   - Not too many to overwhelm UI
+   - Similar to VS (6-8 weapon slots)
+
+2. **Auto-Aim = Nearest Enemy**
+   - Simple, predictable
+   - Works well with multiple weapons
+   - Can be enhanced later (prioritize low HP, etc.)
+
+3. **Level-Up = Pause Game**
+   - Gives player time to read and choose
+   - Creates tension/relief moments
+   - Can change to slow-mo if pausing feels bad
+
+4. **Day Phase = 30 Seconds**
+   - Enough time to build 1-2 structures
+   - Not long enough to get bored
+   - Creates urgency and strategic choices
+
+5. **Resources From Combat**
+   - Makes combat more rewarding
+   - Removes need for exploration
+   - Maintains building economy
+
+---
+
+## Questions to Consider (For Future Sessions)
+
+1. Should weapon upgrades affect ALL weapons or individual weapons?
+   - Current: All weapons (simpler, more impactful)
+   - Alternative: Choose which weapon to upgrade (more strategic)
+
+2. Should there be weapon rarities (common/rare/epic)?
+   - Phase 5: All weapons equal (simpler)
+   - Phase 6+: Add rarities for variety
+
+3. How should structure blueprints work in level-up?
+   - Option A: Unlock new structure types (one-time)
+   - Option B: Get a free structure placed immediately
+   - Recommend: Discuss with user in Phase 6
+
+4. Should player have HP or be invincible (only lighthouse matters)?
+   - Current: Player has HP and can die
+   - Keeps tension, player must dodge/position
+
+5. Should resource nodes stay on the map?
+   - Option A: Remove entirely (resources only from combat)
+   - Option B: Keep as static bonus spawners
+   - Recommend: Remove for Phase 5, revisit later
+
+### Next Priorities (Phase 6+)
+- Additional weapon types (10-15 unique weapons)
+- Weapon rarities and synergies
+- Structure blueprints in level-up pool
+- Boss enemies and elite variants
+- Replace placeholder sprites with pixel art
+
 
 ## Development Workflow
 

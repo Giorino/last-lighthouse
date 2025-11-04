@@ -17,6 +17,8 @@ var light_rotation: float = 0.0
 @onready var base_sprite = $BaseSprite
 
 func _ready() -> void:
+	# Apply upgrade bonuses
+	max_health += GameManager.get_lighthouse_max_hp_bonus()
 	current_health = max_health
 	add_to_group("lighthouse")
 

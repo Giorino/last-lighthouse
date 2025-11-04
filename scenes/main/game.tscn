@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/main/game.gd" id="1_game"]
 [ext_resource type="PackedScene" path="res://scenes/gameplay/lighthouse.tscn" id="2_lighthouse"]
@@ -6,6 +6,13 @@
 [ext_resource type="Script" path="res://scripts/systems/build_system.gd" id="4_build"]
 [ext_resource type="Script" path="res://scripts/gameplay/day_night_cycle.gd" id="5_cycle"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="6_hud"]
+[ext_resource type="Script" path="res://scripts/systems/navigation_manager.gd" id="7_nav"]
+[ext_resource type="Script" path="res://scripts/systems/wave_spawner.gd" id="8_wave"]
+[ext_resource type="PackedScene" path="res://scenes/ui/pause_menu.tscn" id="9_pause"]
+[ext_resource type="PackedScene" path="res://scenes/ui/settings_menu.tscn" id="10_settings"]
+[ext_resource type="PackedScene" path="res://scenes/ui/game_over_screen.tscn" id="11_gameover"]
+[ext_resource type="PackedScene" path="res://scenes/ui/level_up_screen.tscn" id="12_levelup"]
+[ext_resource type="Script" path="res://scripts/systems/camera_controller.gd" id="13_camera"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_game")
@@ -15,9 +22,13 @@ offset_right = 320.0
 offset_bottom = 180.0
 color = Color(0.15, 0.2, 0.25, 1)
 
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(160, 90)
 zoom = Vector2(1, 1)
+position_smoothing_enabled = true
+script = ExtResource("13_camera")
 
 [node name="Lighthouse" parent="." instance=ExtResource("2_lighthouse")]
 position = Vector2(160, 90)
@@ -31,4 +42,18 @@ script = ExtResource("4_build")
 [node name="DayNightCycle" type="Node" parent="."]
 script = ExtResource("5_cycle")
 
+[node name="NavigationManager" type="Node" parent="."]
+script = ExtResource("7_nav")
+
+[node name="WaveSpawner" type="Node" parent="."]
+script = ExtResource("8_wave")
+
 [node name="HUD" parent="." instance=ExtResource("6_hud")]
+
+[node name="PauseMenu" parent="." instance=ExtResource("9_pause")]
+
+[node name="SettingsMenu" parent="." instance=ExtResource("10_settings")]
+
+[node name="GameOverScreen" parent="." instance=ExtResource("11_gameover")]
+
+[node name="LevelUpScreen" parent="." instance=ExtResource("12_levelup")]
