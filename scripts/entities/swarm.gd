@@ -8,6 +8,7 @@ func _ready() -> void:
 	attack_damage = 5
 	attack_range = 15.0
 	attack_cooldown = 0.8  # Faster attack speed to compensate for low damage
+	xp_value = 3  # PHASE 5: Low XP for weak enemy (but spawns in groups)
 
 	super._ready()
 

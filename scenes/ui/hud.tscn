@@ -17,75 +17,115 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="ResourcePanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+[node name="TopBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ResourcePanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/TopBar"]
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/ResourcePanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TopBar/ResourcePanel"]
 layout_mode = 2
 
-[node name="WoodLabel" type="Label" parent="MarginContainer/HBoxContainer/ResourcePanel/VBoxContainer"]
+[node name="WoodLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/ResourcePanel/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
 text = "Wood: 50"
 
-[node name="MetalLabel" type="Label" parent="MarginContainer/HBoxContainer/ResourcePanel/VBoxContainer"]
+[node name="MetalLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/ResourcePanel/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
 text = "Metal: 20"
 
-[node name="StoneLabel" type="Label" parent="MarginContainer/HBoxContainer/ResourcePanel/VBoxContainer"]
+[node name="StoneLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/ResourcePanel/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
 text = "Stone: 30"
 
-[node name="FuelLabel" type="Label" parent="MarginContainer/HBoxContainer/ResourcePanel/VBoxContainer"]
+[node name="FuelLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/ResourcePanel/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
 text = "Fuel: 10"
 
-[node name="CenterPanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+[node name="CenterPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/TopBar"]
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/CenterPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TopBar/CenterPanel"]
 layout_mode = 2
 
-[node name="PhaseLabel" type="Label" parent="MarginContainer/HBoxContainer/CenterPanel/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "DAY"
-horizontal_alignment = 1
-
-[node name="TimeLabel" type="Label" parent="MarginContainer/HBoxContainer/CenterPanel/VBoxContainer"]
+[node name="PhaseLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/CenterPanel/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
-text = "05:00"
+text = "NIGHT"
 horizontal_alignment = 1
 
-[node name="LighthousePanel" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+[node name="TimeLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/CenterPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "01:00"
+horizontal_alignment = 1
+
+[node name="LighthousePanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/TopBar"]
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LighthousePanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TopBar/LighthousePanel"]
 layout_mode = 2
 
-[node name="HPLabel" type="Label" parent="MarginContainer/HBoxContainer/LighthousePanel/VBoxContainer"]
+[node name="HPLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/LighthousePanel/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 8
 text = "Lighthouse: 500/500"
 
-[node name="HPBar" type="ProgressBar" parent="MarginContainer/HBoxContainer/LighthousePanel/VBoxContainer"]
+[node name="HPBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/TopBar/LighthousePanel/VBoxContainer"]
 custom_minimum_size = Vector2(60, 6)
 layout_mode = 2
 max_value = 500.0
 value = 500.0
 show_percentage = false
+
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BottomBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="PlayerPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/BottomBar"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/BottomBar/PlayerPanel"]
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="MarginContainer/VBoxContainer/BottomBar/PlayerPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "Level 1"
+
+[node name="XPBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/BottomBar/PlayerPanel/VBoxContainer"]
+custom_minimum_size = Vector2(100, 6)
+layout_mode = 2
+max_value = 10.0
+show_percentage = false
+
+[node name="XPLabel" type="Label" parent="MarginContainer/VBoxContainer/BottomBar/PlayerPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "0/10 XP"
+
+[node name="WeaponPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/BottomBar"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/BottomBar/WeaponPanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
 
 [node name="BuildMenu" parent="." instance=ExtResource("2_build_menu")]
 visible = false

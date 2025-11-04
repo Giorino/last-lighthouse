@@ -11,6 +11,7 @@ func _ready() -> void:
 	attack_damage = 8
 	attack_range = 150.0
 	attack_cooldown = 1.5  # Slightly slower attack than crawler
+	xp_value = 8  # PHASE 5: Medium XP for ranged enemy
 
 	super._ready()
 

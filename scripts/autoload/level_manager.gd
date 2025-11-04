@@ -38,6 +38,15 @@ func level_up() -> void:
 	print("=== LEVEL UP! Now level %d ===" % current_level)
 	print("Next level requires: %d XP" % xp_to_next_level)
 
+	# PHASE 5: Visual feedback - spawn level-up particles at player position
+	var keeper = get_tree().get_first_node_in_group("keeper")
+	if keeper and VisualEffectsManager:
+		VisualEffectsManager.spawn_level_up_particles(keeper.global_position)
+
+	# PHASE 5: Camera shake for level-up celebration
+	if EventBus:
+		EventBus.camera_shake.emit(0.4)  # Medium-heavy shake for excitement
+
 	# Emit level up signal
 	leveled_up.emit(current_level)
 

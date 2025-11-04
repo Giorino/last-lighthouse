@@ -6,6 +6,7 @@ var hit_effect: PackedScene
 var death_explosion: PackedScene
 var muzzle_flash: PackedScene
 var build_particles: PackedScene
+var level_up_particles: PackedScene  # PHASE 5
 
 func _ready() -> void:
 	# Load all effect scenes
@@ -13,6 +14,7 @@ func _ready() -> void:
 	death_explosion = load("res://scenes/effects/death_explosion.tscn")
 	muzzle_flash = load("res://scenes/effects/muzzle_flash.tscn")
 	build_particles = load("res://scenes/effects/build_particles.tscn")
+	level_up_particles = load("res://scenes/effects/level_up_particles.tscn")  # PHASE 5
 
 	print("VisualEffectsManager initialized")
 
@@ -33,6 +35,10 @@ func spawn_muzzle_flash(position: Vector2, rotation_degrees: float = 0.0, parent
 ## Spawn build/placement particles at a position
 func spawn_build_particles(position: Vector2, parent: Node = null) -> void:
 	_spawn_effect(build_particles, position, parent)
+
+## PHASE 5: Spawn level-up celebration particles at a position
+func spawn_level_up_particles(position: Vector2, parent: Node = null) -> void:
+	_spawn_effect(level_up_particles, position, parent)
 
 ## Generic effect spawner
 func _spawn_effect(effect_scene: PackedScene, position: Vector2, parent: Node = null) -> Node2D:
