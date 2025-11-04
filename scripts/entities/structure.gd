@@ -29,9 +29,9 @@ func _ready() -> void:
 func take_damage(amount: int) -> void:
 	current_health -= amount
 
-	# Juice: Hit particles and light shake
+	# PHASE 5D: Enhanced hit feedback - sparks for metal structures
 	if VisualEffectsManager:
-		VisualEffectsManager.spawn_hit_effect(global_position)
+		VisualEffectsManager.spawn_sparks(global_position)  # Sparks for structure impacts
 	if EventBus:
 		EventBus.camera_shake.emit(0.1)  # Light shake
 
@@ -62,9 +62,11 @@ func destroy() -> void:
 	print("%s destroyed!" % structure_name)
 	EventBus.structure_destroyed.emit(self)
 
-	# Juice: Explosion particles, heavy shake, and hit pause
+	# PHASE 5D: Enhanced destruction effects - explosion + smoke + sparks
 	if VisualEffectsManager:
 		VisualEffectsManager.spawn_death_explosion(global_position)
+		VisualEffectsManager.spawn_smoke_puff(global_position)
+		VisualEffectsManager.spawn_sparks(global_position)
 	if EventBus:
 		EventBus.camera_shake.emit(0.5)  # Heavy shake for structure destruction
 	if TimeScaleManager:

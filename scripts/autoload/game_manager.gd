@@ -62,9 +62,8 @@ func advance_to_next_night() -> void:
 	current_phase = Constants.Phase.DAY
 	EventBus.day_started.emit()
 
-## Check if player has won the game (survived target nights)
-func check_victory_condition(target_nights: int = 20) -> bool:
-	return current_night >= target_nights
+## PHASE 5: No win condition, game is endless survival
+## Victory condition removed - players survive as long as possible
 
 ## Pause the game
 func pause_game() -> void:

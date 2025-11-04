@@ -11,6 +11,7 @@ func _ready() -> void:
 	attack_damage = 25
 	attack_range = 25.0
 	attack_cooldown = 1.5  # Slower attack, but hits harder
+	xp_value = 15  # PHASE 5: Higher XP for tougher enemy
 
 	super._ready()
 

@@ -6,6 +6,10 @@ var hit_effect: PackedScene
 var death_explosion: PackedScene
 var muzzle_flash: PackedScene
 var build_particles: PackedScene
+var level_up_particles: PackedScene  # PHASE 5
+var blood_splatter: PackedScene  # PHASE 5D
+var sparks: PackedScene  # PHASE 5D
+var smoke_puff: PackedScene  # PHASE 5D
 
 func _ready() -> void:
 	# Load all effect scenes
@@ -13,6 +17,10 @@ func _ready() -> void:
 	death_explosion = load("res://scenes/effects/death_explosion.tscn")
 	muzzle_flash = load("res://scenes/effects/muzzle_flash.tscn")
 	build_particles = load("res://scenes/effects/build_particles.tscn")
+	level_up_particles = load("res://scenes/effects/level_up_particles.tscn")  # PHASE 5
+	blood_splatter = load("res://scenes/effects/blood_splatter.tscn")  # PHASE 5D
+	sparks = load("res://scenes/effects/sparks.tscn")  # PHASE 5D
+	smoke_puff = load("res://scenes/effects/smoke_puff.tscn")  # PHASE 5D
 
 	print("VisualEffectsManager initialized")
 
@@ -33,6 +41,22 @@ func spawn_muzzle_flash(position: Vector2, rotation_degrees: float = 0.0, parent
 ## Spawn build/placement particles at a position
 func spawn_build_particles(position: Vector2, parent: Node = null) -> void:
 	_spawn_effect(build_particles, position, parent)
+
+## PHASE 5: Spawn level-up celebration particles at a position
+func spawn_level_up_particles(position: Vector2, parent: Node = null) -> void:
+	_spawn_effect(level_up_particles, position, parent)
+
+## PHASE 5D: Spawn blood splatter effect
+func spawn_blood_splatter(position: Vector2, parent: Node = null) -> void:
+	_spawn_effect(blood_splatter, position, parent)
+
+## PHASE 5D: Spawn sparks effect (for metal impacts)
+func spawn_sparks(position: Vector2, parent: Node = null) -> void:
+	_spawn_effect(sparks, position, parent)
+
+## PHASE 5D: Spawn smoke puff effect
+func spawn_smoke_puff(position: Vector2, parent: Node = null) -> void:
+	_spawn_effect(smoke_puff, position, parent)
 
 ## Generic effect spawner
 func _spawn_effect(effect_scene: PackedScene, position: Vector2, parent: Node = null) -> Node2D:

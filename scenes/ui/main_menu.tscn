@@ -33,41 +33,41 @@ layout_mode = 2
 
 [node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 8
 text = "LAST LIGHTHOUSE"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 10)
+custom_minimum_size = Vector2(0, 6)
 layout_mode = 2
 
 [node name="ButtonContainer" type="VBoxContainer" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 3
 
 [node name="NewRunButton" type="Button" parent="CenterContainer/VBoxContainer/ButtonContainer"]
-custom_minimum_size = Vector2(100, 20)
+custom_minimum_size = Vector2(60, 12)
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 4
 text = "New Run"
 
 [node name="UpgradesButton" type="Button" parent="CenterContainer/VBoxContainer/ButtonContainer"]
-custom_minimum_size = Vector2(100, 20)
+custom_minimum_size = Vector2(60, 12)
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 4
 text = "Upgrades"
 
 [node name="SettingsButton" type="Button" parent="CenterContainer/VBoxContainer/ButtonContainer"]
-custom_minimum_size = Vector2(100, 20)
+custom_minimum_size = Vector2(60, 12)
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 4
 text = "Settings"
 
 [node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer/ButtonContainer"]
-custom_minimum_size = Vector2(100, 20)
+custom_minimum_size = Vector2(60, 12)
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 4
 text = "Quit"
 
 [node name="StatsContainer" type="MarginContainer" parent="."]
@@ -75,17 +75,17 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_top = -40.0
-offset_right = 120.0
+offset_top = -25.0
+offset_right = 70.0
 grow_vertical = 0
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
 
 [node name="StatsLabel" type="Label" parent="StatsContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 8
+theme_override_font_sizes/font_size = 3
 text = "Keeper Tokens: 0
 Highest Night: 0
 Total Runs: 0"

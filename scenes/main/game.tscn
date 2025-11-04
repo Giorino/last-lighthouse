@@ -18,23 +18,23 @@
 script = ExtResource("1_game")
 
 [node name="Background" type="ColorRect" parent="."]
-offset_right = 320.0
-offset_bottom = 180.0
+offset_right = 640.0
+offset_bottom = 360.0
 color = Color(0.15, 0.2, 0.25, 1)
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(160, 90)
+position = Vector2(320, 180)
 zoom = Vector2(1, 1)
 position_smoothing_enabled = true
 script = ExtResource("13_camera")
 
 [node name="Lighthouse" parent="." instance=ExtResource("2_lighthouse")]
-position = Vector2(160, 90)
+position = Vector2(320, 180)
 
 [node name="Keeper" parent="." instance=ExtResource("3_keeper")]
-position = Vector2(140, 110)
+position = Vector2(280, 220)
 
 [node name="BuildSystem" type="Node2D" parent="."]
 script = ExtResource("4_build")

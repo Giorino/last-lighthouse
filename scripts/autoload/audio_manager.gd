@@ -19,9 +19,32 @@ var music_tracks: Dictionary = {
 
 ## Sound effects (to be loaded when assets are added)
 var sound_effects: Dictionary = {
-	#"place_structure": preload("res://assets/audio/sfx/place.ogg"),
-	#"enemy_hit": preload("res://assets/audio/sfx/hit.ogg"),
-	#"enemy_death": preload("res://assets/audio/sfx/death.ogg"),
+	# PHASE 5D: Comprehensive sound effect slots
+	# Combat sounds
+	#"enemy_hit": preload("res://assets/audio/sfx/enemy_hit.ogg"),
+	#"enemy_death": preload("res://assets/audio/sfx/enemy_death.ogg"),
+	#"structure_hit": preload("res://assets/audio/sfx/structure_hit.ogg"),
+	#"structure_destroyed": preload("res://assets/audio/sfx/structure_destroyed.ogg"),
+
+	# Weapon sounds
+	#"weapon_fire_pistol": preload("res://assets/audio/sfx/pistol.ogg"),
+	#"weapon_fire_rifle": preload("res://assets/audio/sfx/rifle.ogg"),
+	#"weapon_fire_wrench": preload("res://assets/audio/sfx/wrench.ogg"),
+
+	# UI sounds
+	#"level_up": preload("res://assets/audio/sfx/level_up.ogg"),
+	#"xp_pickup": preload("res://assets/audio/sfx/xp_pickup.ogg"),
+	#"button_click": preload("res://assets/audio/sfx/button_click.ogg"),
+	#"upgrade_selected": preload("res://assets/audio/sfx/upgrade_selected.ogg"),
+
+	# Building sounds
+	#"place_structure": preload("res://assets/audio/sfx/place_structure.ogg"),
+	#"repair_structure": preload("res://assets/audio/sfx/repair.ogg"),
+
+	# Ambient sounds
+	#"lighthouse_beam": preload("res://assets/audio/sfx/beam.ogg"),
+	#"night_transition": preload("res://assets/audio/sfx/night_start.ogg"),
+	#"day_transition": preload("res://assets/audio/sfx/day_start.ogg"),
 }
 
 func _ready() -> void:
@@ -42,7 +65,45 @@ func _ready() -> void:
 		music_volume = SaveManager.get_setting("music_volume", 1.0)
 		sfx_volume = SaveManager.get_setting("sfx_volume", 1.0)
 
+	# PHASE 5D: Connect to EventBus for automatic sound triggering
+	_connect_event_signals()
+
 	print("AudioManager initialized")
+
+## PHASE 5D: Connect event bus signals for automatic sound effects
+func _connect_event_signals() -> void:
+	if not EventBus:
+		return
+
+	# Combat events
+	EventBus.damage_dealt.connect(_on_damage_dealt)
+	EventBus.enemy_died.connect(_on_enemy_died)
+	EventBus.structure_destroyed.connect(_on_structure_destroyed)
+
+	# Phase transitions
+	EventBus.day_started.connect(_on_day_started)
+	EventBus.night_started.connect(_on_night_started)
+
+## PHASE 5D: Event handlers for automatic sound triggering
+func _on_damage_dealt(target: Node, _amount: int) -> void:
+	if target.is_in_group("enemies"):
+		play_sfx("enemy_hit", 0.8)
+	elif target.is_in_group("structures"):
+		play_sfx("structure_hit", 0.9)
+
+func _on_enemy_died(_enemy: Node) -> void:
+	play_sfx("enemy_death", randf_range(0.9, 1.1))
+
+func _on_structure_destroyed(_structure: Node) -> void:
+	play_sfx("structure_destroyed", 1.2)
+
+func _on_day_started() -> void:
+	play_sfx("day_transition")
+	play_music("day")
+
+func _on_night_started() -> void:
+	play_sfx("night_transition")
+	play_music("night")
 
 func play_music(track_name: String, fade_in: float = 0.5) -> void:
 	"""Play a music track with optional fade-in"""
@@ -128,3 +189,40 @@ func linear_to_db(linear: float) -> float:
 	if linear <= 0:
 		return -80
 	return 20 * log(linear) / log(10)
+
+## PHASE 5D: Play sound effect with random pitch variation
+func play_sfx_pitched(sfx_name: String, min_pitch: float = 0.9, max_pitch: float = 1.1, volume_multiplier: float = 1.0) -> void:
+	"""Play a sound effect with randomized pitch for variety"""
+	if not sound_effects.has(sfx_name):
+		return
+
+	var sfx = sound_effects[sfx_name]
+
+	# Find available SFX player
+	var player: AudioStreamPlayer = null
+	for sfx_player in sfx_players:
+		if not sfx_player.playing:
+			player = sfx_player
+			break
+
+	if not player:
+		player = sfx_players[0]
+
+	# Play sound with random pitch
+	player.stream = sfx
+	player.volume_db = linear_to_db(sfx_volume * volume_multiplier)
+	player.pitch_scale = randf_range(min_pitch, max_pitch)
+	player.play()
+
+## PHASE 5D: Helper methods for common sound patterns
+func play_ui_sound(sfx_name: String = "button_click") -> void:
+	"""Play UI sound (button clicks, selections)"""
+	play_sfx(sfx_name, 0.7)
+
+func play_combat_sound(sfx_name: String) -> void:
+	"""Play combat sound with pitch variation"""
+	play_sfx_pitched(sfx_name, 0.9, 1.15, 1.0)
+
+func play_impact_sound(sfx_name: String) -> void:
+	"""Play impact/destruction sound"""
+	play_sfx(sfx_name, 1.2)

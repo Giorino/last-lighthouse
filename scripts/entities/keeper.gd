@@ -9,6 +9,7 @@ extends CharacterBody2D
 
 ## Current state
 var current_health: int = max_health
+var is_dead: bool = false  # Prevent multiple death calls
 var is_gathering: bool = false
 var is_repairing: bool = false
 var repair_target: Structure = null
@@ -43,6 +44,9 @@ func _ready() -> void:
 
 	# Register with GameManager
 	GameManager.keeper = self
+
+	# DEBUG: Log initial state
+	print("=== KEEPER INITIALIZED: %d/%d HP at position %s ===" % [current_health, max_health, global_position])
 
 func _physics_process(delta: float) -> void:
 	# Don't move while gathering or repairing
@@ -218,7 +222,16 @@ func cancel_repair() -> void:
 		sprite.modulate = Color.WHITE
 
 func take_damage(amount: int) -> void:
+	if is_dead:
+		return  # Already dead, ignore further damage
+
 	current_health -= amount
+	print("[%d ms] Keeper took %d damage! HP: %d/%d" % [
+		Time.get_ticks_msec(),
+		amount,
+		current_health,
+		max_health
+	])
 
 	# Flash red for feedback
 	var tween = create_tween()
@@ -229,7 +242,26 @@ func take_damage(amount: int) -> void:
 		die()
 
 func die() -> void:
+	if is_dead:
+		return  # Already dead, prevent multiple calls
+
+	is_dead = true
 	print("Keeper died!")
+
+	# Disable collision immediately to prevent further damage
+	if collision_shape:
+		collision_shape.set_deferred("disabled", true)
+
+	# Trigger game over
+	EventBus.game_over.emit()
+
+	# Visual death effect
+	if sprite:
+		var tween = create_tween()
+		tween.tween_property(sprite, "modulate:a", 0.0, 0.5)
+		tween.tween_property(sprite, "scale", Vector2(1.5, 1.5), 0.5)
+		await tween.finished
+
 	queue_free()
 
 func heal(amount: int) -> void:

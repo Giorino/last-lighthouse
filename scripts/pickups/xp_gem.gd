@@ -72,15 +72,20 @@ func collect(collector: Node2D) -> void:
 	if LevelManager:
 		LevelManager.add_xp(xp_value)
 
-	# Visual/audio feedback
-	if VisualEffectsManager:
-		VisualEffectsManager.spawn_hit_effect(global_position)
+	# PHASE 5: Visual feedback - sparkle effect and scale animation
+	if sprite:
+		var tween = create_tween()
+		tween.set_parallel(true)
+		tween.tween_property(sprite, "scale", sprite.scale * 2.0, 0.2)
+		tween.tween_property(sprite, "modulate:a", 0.0, 0.2)
 
-	# TODO: Add sound effect
+	# PHASE 5: TODO - Add sound effect for XP pickup (when audio assets available)
+	# AudioManager.play_sfx("xp_pickup")
 
 	print("Collected %d XP" % xp_value)
 
-	# Destroy gem
+	# Destroy gem after animation
+	await get_tree().create_timer(0.2).timeout
 	queue_free()
 
 func fade_out() -> void:
