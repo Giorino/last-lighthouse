@@ -34,8 +34,8 @@ func _physics_process(delta: float) -> void:
 
 func _on_body_entered(body: Node2D) -> void:
 	"""Handle collision with bodies (enemies)"""
-	if body.is_in_group("structures") or body.is_in_group("lighthouse"):
-		# Don't hit friendly structures
+	if body.is_in_group("structures") or body.is_in_group("lighthouse") or body.is_in_group("keeper"):
+		# Don't hit friendly entities
 		return
 
 	# Deal damage if target has take_damage method
@@ -48,8 +48,8 @@ func _on_body_entered(body: Node2D) -> void:
 
 func _on_area_entered(area: Area2D) -> void:
 	"""Handle collision with areas"""
-	if area.is_in_group("structures") or area.is_in_group("lighthouse"):
-		# Don't hit friendly structures
+	if area.is_in_group("structures") or area.is_in_group("lighthouse") or area.is_in_group("keeper"):
+		# Don't hit friendly entities
 		return
 
 	# Deal damage if target has take_damage method

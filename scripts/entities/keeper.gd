@@ -45,6 +45,9 @@ func _ready() -> void:
 	# Register with GameManager
 	GameManager.keeper = self
 
+	# DEBUG: Log initial state
+	print("=== KEEPER INITIALIZED: %d/%d HP at position %s ===" % [current_health, max_health, global_position])
+
 func _physics_process(delta: float) -> void:
 	# Don't move while gathering or repairing
 	if is_gathering or is_repairing:
@@ -223,7 +226,12 @@ func take_damage(amount: int) -> void:
 		return  # Already dead, ignore further damage
 
 	current_health -= amount
-	print("Keeper took %d damage! HP: %d/%d" % [amount, current_health, max_health])
+	print("[%d ms] Keeper took %d damage! HP: %d/%d" % [
+		Time.get_ticks_msec(),
+		amount,
+		current_health,
+		max_health
+	])
 
 	# Flash red for feedback
 	var tween = create_tween()

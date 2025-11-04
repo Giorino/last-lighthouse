@@ -188,6 +188,9 @@ func spawn_enemies(composition: Dictionary) -> void:
 			var enemy = enemy_scene.instantiate()
 			enemy.global_position = spawn_pos
 
+			# DEBUG: Log spawn position
+			print("  Spawning %s at %s" % [enemy_type.capitalize(), spawn_pos])
+
 			# Connect to enemy death
 			enemy.tree_exited.connect(_on_enemy_died)
 
