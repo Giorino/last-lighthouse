@@ -139,7 +139,7 @@ func _update_weapon_slots() -> void:
 	# Create 6 weapon slot indicators
 	for i in range(6):
 		var slot_panel = PanelContainer.new()
-		slot_panel.custom_minimum_size = Vector2(18, 18)
+		slot_panel.custom_minimum_size = Vector2(12, 12)
 		slot_panel.name = "WeaponSlot%d" % i
 
 		# Check if slot is filled
@@ -171,7 +171,7 @@ func _update_weapon_slots() -> void:
 			slot_label.text = "%d" % (i + 1)
 		slot_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		slot_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		slot_label.add_theme_font_size_override("font_size", 6)
+		slot_label.add_theme_font_size_override("font_size", 3)
 		slot_label.add_theme_color_override("font_color", Color.WHITE if is_filled else Color(0.5, 0.5, 0.5))
 
 		slot_panel.add_child(slot_label)
