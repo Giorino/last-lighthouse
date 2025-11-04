@@ -31,8 +31,8 @@ func _ready() -> void:
 
 	# PHASE 5: Connect to XP and level signals
 	if LevelManager:
-		LevelManager.xp_changed.connect(_on_xp_changed)
-		LevelManager.level_up.connect(_on_level_up)
+		LevelManager.xp_gained.connect(_on_xp_gained)
+		LevelManager.leveled_up.connect(_on_leveled_up)
 
 	# Initialize displays
 	_update_all_resources()
@@ -99,21 +99,22 @@ func _update_xp_display() -> void:
 		level_label.text = "Level %d" % LevelManager.current_level
 
 	if xp_bar:
-		xp_bar.max_value = LevelManager.xp_for_next_level
+		xp_bar.max_value = LevelManager.xp_to_next_level
 		xp_bar.value = LevelManager.current_xp
 
 	if xp_label:
-		xp_label.text = "%d/%d XP" % [LevelManager.current_xp, LevelManager.xp_for_next_level]
+		xp_label.text = "%d/%d XP" % [LevelManager.current_xp, LevelManager.xp_to_next_level]
 
-func _on_xp_changed(current_xp: int, xp_for_next: int) -> void:
+func _on_xp_gained(amount: int, total: int) -> void:
+	# Update XP bar when XP is gained
 	if xp_bar:
-		xp_bar.max_value = xp_for_next
-		xp_bar.value = current_xp
+		xp_bar.max_value = LevelManager.xp_to_next_level
+		xp_bar.value = LevelManager.current_xp
 
 	if xp_label:
-		xp_label.text = "%d/%d XP" % [current_xp, xp_for_next]
+		xp_label.text = "%d/%d XP" % [LevelManager.current_xp, LevelManager.xp_to_next_level]
 
-func _on_level_up(new_level: int) -> void:
+func _on_leveled_up(new_level: int) -> void:
 	if level_label:
 		level_label.text = "Level %d" % new_level
 	_update_xp_display()
