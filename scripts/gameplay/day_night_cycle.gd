@@ -3,7 +3,7 @@ class_name DayNightCycle
 extends Node
 
 ## Current phase and timing
-var current_phase: Constants.Phase = Constants.Phase.NIGHT
+var current_phase: Constants.Phase = Constants.Phase.DAY
 var time_remaining: float = 0.0
 var current_night: int = 1
 
@@ -11,8 +11,8 @@ var current_night: int = 1
 var warned_30_seconds: bool = false
 
 func _ready() -> void:
-	# PHASE 5: Start with first night (not day)
-	start_night_phase()
+	# PHASE 5D: Start with Day 1 (15s tutorial phase)
+	start_day_phase()
 
 func _process(delta: float) -> void:
 	if GameManager.is_paused:
@@ -28,11 +28,13 @@ func _process(delta: float) -> void:
 func _process_day_phase(delta: float) -> void:
 	time_remaining -= delta
 
-	# PHASE 5: Day is only 30s, warn at 10s
-	if time_remaining <= 10.0 and not warned_30_seconds:
+	# PHASE 5D: Warn at 10s (unless Day 1 which is only 15s)
+	var warning_threshold = 5.0 if current_night == 1 else 10.0
+
+	if time_remaining <= warning_threshold and not warned_30_seconds:
 		warned_30_seconds = true
-		EventBus.night_approaching.emit(10)
-		EventBus.show_notification.emit("Night approaches in 10 seconds!")
+		EventBus.night_approaching.emit(int(warning_threshold))
+		EventBus.show_notification.emit("Night approaches in %d seconds!" % int(warning_threshold))
 
 	if time_remaining <= 0:
 		# PHASE 5: Go directly to night (no transition)
@@ -50,15 +52,25 @@ func _process_night_phase(delta: float) -> void:
 
 func start_day_phase() -> void:
 	current_phase = Constants.Phase.DAY
-	time_remaining = Constants.DAY_DURATION  # 30 seconds
 	warned_30_seconds = false
+
+	# PHASE 5D: Day 1 is slightly longer (15s tutorial), Day 2+ is 30s
+	if current_night == 1:
+		time_remaining = 15.0  # First day: 15 seconds to learn
+		EventBus.show_notification.emit("Day 1 - Build defenses! Night approaches in 15 seconds...")
+	else:
+		time_remaining = Constants.DAY_DURATION  # 30 seconds
 
 	# PHASE 5: Enable building during day
 	GameManager.enable_building = true
 	GameManager.enable_scavenging = false  # No scavenging in Phase 5
 
 	EventBus.day_started.emit()
-	print("=== DAY %d STARTED (30s build phase) ===" % current_night)
+
+	if current_night == 1:
+		print("=== DAY 1 STARTED (15s tutorial phase) ===")
+	else:
+		print("=== DAY %d STARTED (30s build phase) ===" % current_night)
 
 func start_night_phase() -> void:
 	current_phase = Constants.Phase.NIGHT
