@@ -118,7 +118,7 @@ func _on_level_up(new_level: int) -> void:
 		level_label.text = "Level %d" % new_level
 	_update_xp_display()
 
-## PHASE 5: Update weapon slot indicators
+## PHASE 5D: Enhanced weapon slot indicators with visual feedback
 func _update_weapon_slots() -> void:
 	if not weapon_slots_container:
 		return
@@ -127,18 +127,55 @@ func _update_weapon_slots() -> void:
 	for child in weapon_slots_container.get_children():
 		child.queue_free()
 
+	# Get keeper's weapon manager
+	var keeper = GameManager.keeper
+	var weapon_manager = null
+	if keeper and keeper.has_node("WeaponManager"):
+		weapon_manager = keeper.get_node("WeaponManager")
+	elif keeper and "weapon_manager" in keeper:
+		weapon_manager = keeper.weapon_manager
+
 	# Create 6 weapon slot indicators
 	for i in range(6):
 		var slot_panel = PanelContainer.new()
-		slot_panel.custom_minimum_size = Vector2(24, 24)
+		slot_panel.custom_minimum_size = Vector2(28, 28)
+		slot_panel.name = "WeaponSlot%d" % i
+
+		# Check if slot is filled
+		var is_filled = false
+		var weapon_name = ""
+		if weapon_manager and weapon_manager.weapon_slots.size() > i:
+			var weapon = weapon_manager.weapon_slots[i]
+			if weapon != null:
+				is_filled = true
+				weapon_name = weapon.weapon_name if "weapon_name" in weapon else "?"
+
+		# Style based on filled/empty
+		var bg_color = Color(0.2, 0.5, 0.2, 0.8) if is_filled else Color(0.2, 0.2, 0.2, 0.5)
+		var panel_style = StyleBoxFlat.new()
+		panel_style.bg_color = bg_color
+		panel_style.border_width_left = 1
+		panel_style.border_width_right = 1
+		panel_style.border_width_top = 1
+		panel_style.border_width_bottom = 1
+		panel_style.border_color = Color(0.5, 0.5, 0.5, 1.0) if is_filled else Color(0.3, 0.3, 0.3, 0.5)
+		slot_panel.add_theme_stylebox_override("panel", panel_style)
 
 		var slot_label = Label.new()
-		slot_label.text = "%d" % (i + 1)
+		if is_filled and weapon_name:
+			# Show first letter of weapon name
+			slot_label.text = weapon_name.substr(0, 1).to_upper()
+		else:
+			# Show slot number
+			slot_label.text = "%d" % (i + 1)
 		slot_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		slot_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-		slot_label.add_theme_font_size_override("font_size", 8)
+		slot_label.add_theme_font_size_override("font_size", 10)
+		slot_label.add_theme_color_override("font_color", Color.WHITE if is_filled else Color(0.5, 0.5, 0.5))
 
 		slot_panel.add_child(slot_label)
 		weapon_slots_container.add_child(slot_panel)
 
-		# TODO: Update slot appearance based on whether weapon is equipped
+## PHASE 5D: Call this when weapons change
+func refresh_weapon_slots() -> void:
+	_update_weapon_slots()

@@ -10,10 +10,17 @@ extends CanvasLayer
 ## Current upgrade options
 var current_options: Array = []
 
+## PHASE 5D: Animation state
+var is_animating: bool = false
+
 func _ready() -> void:
 	# Hide by default
 	visible = false
 	process_mode = Node.PROCESS_MODE_ALWAYS  # Continue processing even when game is paused
+
+	# PHASE 5D: Position off-screen initially for slide-in animation
+	if panel_container:
+		panel_container.position.y = -300
 
 	# Connect to LevelManager signals
 	if LevelManager:
@@ -41,10 +48,9 @@ func _on_level_up_choices_ready(options: Array) -> void:
 	show_screen()
 
 func create_choice_button(option: Dictionary, index: int) -> void:
-	"""Create a button for an upgrade choice"""
-	# For now, create simple buttons (will be replaced with fancy buttons later)
+	"""PHASE 5D: Create an animated button for an upgrade choice"""
 	var button = Button.new()
-	button.custom_minimum_size = Vector2(90, 60)
+	button.custom_minimum_size = Vector2(100, 70)
 
 	# Set button text
 	var button_text = "%s\n%s" % [option.name, option.description]
@@ -53,15 +59,69 @@ func create_choice_button(option: Dictionary, index: int) -> void:
 	# Style the button for pixel art
 	button.add_theme_font_size_override("font_size", 8)
 
-	# Connect button press
-	button.pressed.connect(_on_choice_selected.bind(option))
+	# PHASE 5D: Add custom styling
+	var normal_style = StyleBoxFlat.new()
+	normal_style.bg_color = Color(0.15, 0.15, 0.2, 0.9)
+	normal_style.border_width_left = 2
+	normal_style.border_width_right = 2
+	normal_style.border_width_top = 2
+	normal_style.border_width_bottom = 2
+	normal_style.border_color = Color(0.5, 0.5, 0.6, 1.0)
+	button.add_theme_stylebox_override("normal", normal_style)
+
+	var hover_style = StyleBoxFlat.new()
+	hover_style.bg_color = Color(0.25, 0.3, 0.4, 1.0)
+	hover_style.border_width_left = 2
+	hover_style.border_width_right = 2
+	hover_style.border_width_top = 2
+	hover_style.border_width_bottom = 2
+	hover_style.border_color = Color(0.7, 0.8, 1.0, 1.0)
+	button.add_theme_stylebox_override("hover", hover_style)
+
+	# PHASE 5D: Connect hover effects
+	button.mouse_entered.connect(_on_button_hover.bind(button))
+	button.pressed.connect(_on_choice_selected.bind(option, button))
 
 	# Add to container
 	choices_container.add_child(button)
 
-func _on_choice_selected(option: Dictionary) -> void:
-	"""Handle upgrade choice selection"""
+	# PHASE 5D: Stagger button animations
+	button.modulate.a = 0.0
+	button.scale = Vector2(0.8, 0.8)
+	var delay = index * 0.1
+	await get_tree().create_timer(delay, true, false, true).timeout  # Ignore pause
+
+	var tween = create_tween()
+	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tween.set_parallel(true)
+	tween.tween_property(button, "modulate:a", 1.0, 0.3)
+	tween.tween_property(button, "scale", Vector2.ONE, 0.3).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+
+## PHASE 5D: Button hover effect
+func _on_button_hover(button: Button) -> void:
+	"""Scale up button slightly on hover"""
+	if AudioManager:
+		AudioManager.play_ui_sound("button_click")
+
+	var tween = create_tween()
+	tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	tween.tween_property(button, "scale", Vector2(1.05, 1.05), 0.1)
+
+func _on_choice_selected(option: Dictionary, button: Button) -> void:
+	"""PHASE 5D: Handle upgrade choice selection with feedback"""
 	print("Player chose: %s" % option.name)
+
+	# PHASE 5D: Button press animation
+	if button:
+		var tween = create_tween()
+		tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+		tween.tween_property(button, "scale", Vector2(1.15, 1.15), 0.1)
+		tween.tween_property(button, "scale", Vector2(0.9, 0.9), 0.1)
+		await tween.finished
+
+	# PHASE 5D: Play selection sound
+	if AudioManager:
+		AudioManager.play_ui_sound("upgrade_selected")
 
 	# Apply the upgrade
 	if LevelManager:
@@ -71,21 +131,61 @@ func _on_choice_selected(option: Dictionary) -> void:
 	hide_screen()
 
 func show_screen() -> void:
-	"""Show the level-up screen and pause the game"""
+	"""PHASE 5D: Show the level-up screen with slide-in animation"""
+	if is_animating:
+		return
+
+	is_animating = true
 	visible = true
 
 	# Pause the game (or slow it down)
 	get_tree().paused = true
 
+	# PHASE 5D: Slide in from top with bounce
+	if panel_container:
+		panel_container.position.y = -300
+		panel_container.modulate.a = 0.0
+
+		var tween = create_tween()
+		tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)  # Work during pause
+		tween.set_parallel(true)
+		tween.tween_property(panel_container, "position:y", 0, 0.4).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+		tween.tween_property(panel_container, "modulate:a", 1.0, 0.3)
+		await tween.finished
+
+	# PHASE 5D: Play UI sound
+	if AudioManager:
+		AudioManager.play_sfx("level_up")
+
+	is_animating = false
 	print("Level-up screen shown - game paused")
 
 func hide_screen() -> void:
-	"""Hide the level-up screen and resume the game"""
+	"""PHASE 5D: Hide the level-up screen with slide-out animation"""
+	if is_animating:
+		return
+
+	is_animating = true
+
+	# PHASE 5D: Slide out to top with scale
+	if panel_container:
+		var tween = create_tween()
+		tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)  # Work during pause
+		tween.set_parallel(true)
+		tween.tween_property(panel_container, "position:y", -300, 0.3).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_BACK)
+		tween.tween_property(panel_container, "modulate:a", 0.0, 0.25)
+		tween.tween_property(panel_container, "scale", Vector2(0.9, 0.9), 0.3)
+		await tween.finished
+
+		# Reset scale
+		panel_container.scale = Vector2.ONE
+
 	visible = false
 
 	# Resume the game
 	get_tree().paused = false
 
+	is_animating = false
 	print("Level-up screen hidden - game resumed")
 
 ## Alternative: Use time scale instead of full pause

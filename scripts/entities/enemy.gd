@@ -194,9 +194,9 @@ func apply_stun(duration: float) -> void:
 func take_damage(amount: int) -> void:
 	current_health -= amount
 
-	# Juice: Hit particles and light shake
+	# PHASE 5D: Enhanced hit feedback - blood splatter
 	if VisualEffectsManager:
-		VisualEffectsManager.spawn_hit_effect(global_position)
+		VisualEffectsManager.spawn_blood_splatter(global_position)  # Blood instead of generic hit
 	if EventBus:
 		EventBus.camera_shake.emit(0.1)  # Light shake
 	if TimeScaleManager:
@@ -221,9 +221,11 @@ func die() -> void:
 	# Spawn resource drops (chance-based)
 	spawn_resource_drops()
 
-	# Juice: Death explosion particles, camera shake, hit pause
+	# PHASE 5D: Enhanced death effects - explosion + smoke + blood
 	if VisualEffectsManager:
 		VisualEffectsManager.spawn_death_explosion(global_position)
+		VisualEffectsManager.spawn_smoke_puff(global_position)
+		VisualEffectsManager.spawn_blood_splatter(global_position)
 	if EventBus:
 		EventBus.camera_shake.emit(0.3)  # Medium shake
 	if TimeScaleManager:
